@@ -8,7 +8,7 @@ import Metrics from "@/components/Metrics";
 import About from "@/components/About";
 import Experience from "@/components/Experience";
 import Projects from "@/components/Projects";
-import Contact from "@/components/Contact";
+import SiteFooter from "@/components/SiteFooter";
 
 /**
  * The CV links only render once the PDF is actually in public/ — a download
@@ -26,18 +26,15 @@ export default function Home() {
     <>
       <SiteNav />
 
-      <main>
+      <main className="page">
         <Hero cvHref={cvHref} />
         <Metrics />
         <About />
         <Experience />
         <Projects />
-        <Contact cvHref={cvHref} />
       </main>
 
-      <footer className="site-footer">
-        © 2026 {SITE.name} · Zapopan, MX
-      </footer>
+      <SiteFooter cvHref={cvHref} />
     </>
   );
 }

@@ -27,13 +27,16 @@ components/
   SiteNav.tsx       pill flotante + scroll spy
   MobileMenu.tsx    overlay full-screen (< 768px)
   HeroMedia.tsx     video o poster segun viewport y reduced-motion
-  Hero.tsx  Metrics.tsx  About.tsx  Experience.tsx  Projects.tsx  Contact.tsx
+  Hero.tsx  Metrics.tsx  About.tsx  Experience.tsx  Projects.tsx
   CoverflowCarousel.tsx  carrusel 3D de proyectos (drag, teclado, loop)
+  SiteFooter.tsx    footer fijo que se descubre al final + contacto
+  MagneticButton.tsx pills que se inclinan hacia el cursor
   Reveal.tsx        fade + 12px al entrar en viewport
 hooks/
   useMediaQuery.ts  matchMedia via useSyncExternalStore
   useCountUp.ts     conteo easeOutCubic al intersectar
   useScrollSpy.ts   seccion activa
+  useRevealProgress.ts  progreso 0..1 del ultimo viewport, en --reveal
   useMobileMenu.ts  estado del menu, Escape y resize
 lib/content.ts      todo el contenido en un solo lugar
 ```
@@ -80,6 +83,17 @@ Las imágenes en `public/assets/projects/` son placeholders geométricos
 generados en la paleta del sitio. Reemplaza cada `placeholder-N.webp` por una
 captura real (cuadrada) y no hace falta tocar el código: las rutas viven en
 `lib/content.ts`.
+
+## Footer
+
+El footer es `position: fixed` detrás de `main`, que lleva fondo opaco y
+`z-index: 1`. Un `div.footer-reveal` de 100vh en flujo normal le da espacio
+para descubrirse en el último scroll, y es también el ancla `#contacto` del
+nav — un elemento fijo no se puede "scrollear hasta".
+
+`useRevealProgress` escribe el avance 0→1 en `--reveal` sobre el footer, sin
+re-render de React; el parallax del texto gigante y la entrada del bloque
+central salen de esa variable en CSS.
 
 ## Pendientes de contenido
 

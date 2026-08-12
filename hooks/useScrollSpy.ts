@@ -13,13 +13,28 @@ export function useScrollSpy(ids: string[]) {
 
     if (sections.length === 0) return;
 
+    // Kept across callbacks: an observer only reports what *changed*, so a
+    // section merely leaving the band would otherwise strand the previous
+    // winner as active.
+    const intersecting = new Set<string>();
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        for (const entry of entries) {
+          if (entry.isIntersecting) intersecting.add(entry.target.id);
+          else intersecting.delete(entry.target.id);
+        }
 
-        if (visible.length > 0) setActiveId(visible[0].target.id);
+        if (intersecting.size === 0) return;
+
+        const winner = [...intersecting]
+          .map((id) => ({
+            id,
+            top: document.getElementById(id)?.getBoundingClientRect().top ?? 0,
+          }))
+          .sort((a, b) => a.top - b.top)[0];
+
+        setActiveId(winner.id);
       },
       { rootMargin: "-45% 0px -45% 0px" },
     );
