@@ -6,19 +6,117 @@ export const SITE = {
   github: "https://github.com/xAlexei52",
   /** Served from public/ when the file is present; the UI hides the link if not. */
   cvPath: "/cv-alexei-palacios.pdf",
-  tagline:
-    "construyo pipelines serverless en AWS e integro modelos de IA en producción.",
+  headline: ["Software que piensa,", "automatiza y escala."],
+  intro:
+    "Soy ingeniero de software en Zapopan. Desde 2022 construyo los sistemas que sostienen operaciones reales: pipelines serverless en AWS, ERPs a medida y modelos de IA metidos donde de verdad ahorran horas. Trabajo de punta a punta, de la arquitectura al frontend.",
   description:
-    "AI & Cloud Engineer en Zapopan, México. Arquitectura serverless en AWS, integración de modelos de Amazon Bedrock y frontends ligeros en Angular y React.",
+    "Desarrollo a medida en Zapopan, México: páginas web, CRM, ERPs, plugins de PHP, arquitectura serverless en AWS, integración de modelos de IA y automatización de procesos.",
 } as const;
+
+/** Reads as a capability strip under the hero copy. */
+export const SOLUTIONS = [
+  "Páginas web",
+  "CRM",
+  "ERPs",
+  "Plugins PHP",
+  "AWS",
+  "Modelos de IA",
+  "Automatización",
+];
 
 export type NavLink = { label: string; href: string; id: string };
 
 export const NAV_LINKS: NavLink[] = [
+  { label: "Servicios", href: "#servicios", id: "servicios" },
   { label: "Sobre mí", href: "#sobre-mi", id: "sobre-mi" },
   { label: "Experiencia", href: "#experiencia", id: "experiencia" },
   { label: "Proyectos", href: "#proyectos", id: "proyectos" },
   { label: "Contacto", href: "#contacto", id: "contacto" },
+];
+
+export type ServiceAccent = "shu" | "ai" | "matcha" | "kincha";
+export type ServiceGlyph =
+  | "ai"
+  | "automation"
+  | "cloud"
+  | "erp"
+  | "crm"
+  | "web"
+  | "plugin";
+
+export type Service = {
+  id: string;
+  title: string;
+  description: string;
+  bullets: string[];
+  accent: ServiceAccent;
+  glyph: ServiceGlyph;
+};
+
+export const SERVICES: Service[] = [
+  {
+    id: "ia",
+    title: "Integración de modelos de IA",
+    description:
+      "Modelos fundacionales conectados a procesos que ya existen: lectura de documentos, clasificación, extracción estructurada y generación asistida, siempre validada contra tus reglas de negocio.",
+    bullets: ["Amazon Bedrock", "RAG sobre tus datos", "Validación y trazabilidad"],
+    accent: "shu",
+    glyph: "ai",
+  },
+  {
+    id: "automatizacion",
+    title: "Automatización de procesos",
+    description:
+      "Flujos event-driven que quitan el trabajo manual entre sistemas, con reintentos y registro de cada paso.",
+    bullets: ["Event-driven", "Integraciones por API", "Reportes automáticos"],
+    accent: "kincha",
+    glyph: "automation",
+  },
+  {
+    id: "aws",
+    title: "Cloud en AWS",
+    description:
+      "Arquitectura serverless que escala con la demanda y no cuesta cuando nadie la usa.",
+    bullets: ["Lambda y DynamoDB", "Infraestructura con CDK", "Observabilidad"],
+    accent: "ai",
+    glyph: "cloud",
+  },
+  {
+    id: "erp",
+    title: "ERPs a medida",
+    description:
+      "Inventario, manufactura, ventas y costos en un solo sistema, modelado sobre cómo opera tu negocio.",
+    bullets: ["Multi-sucursal", "Reportes PDF y Excel", "Permisos por rol"],
+    accent: "matcha",
+    glyph: "erp",
+  },
+  {
+    id: "crm",
+    title: "Sistemas CRM",
+    description:
+      "Pipeline comercial y seguimiento de clientes, con la información donde tu equipo ya trabaja.",
+    bullets: ["Etapas y embudo", "Historial por cliente", "Tableros de cierre"],
+    accent: "ai",
+    glyph: "crm",
+  },
+  {
+    id: "web",
+    title: "Páginas web",
+    description:
+      "Sitios corporativos rápidos y fáciles de editar. Nada de plantillas genéricas.",
+    bullets: ["SEO técnico", "Core Web Vitals", "Formularios y correo"],
+    accent: "kincha",
+    glyph: "web",
+  },
+  {
+    id: "plugins",
+    title: "Plugins de PHP y WordPress",
+    description:
+      "Extensiones a medida para WooCommerce y WordPress cuando el plugin que necesitas no existe.",
+    bullets: ["WooCommerce", "APIs de terceros", "Panel administrativo"],
+    accent: "matcha",
+    glyph: "plugin",
+  },
 ];
 
 /** Stable identity so the scroll-spy effect is not re-created every render. */

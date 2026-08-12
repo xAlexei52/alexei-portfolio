@@ -1,8 +1,11 @@
-# Portafolio — Alexei Palacios
+# Alexei Palacios — desarrollo a medida
 
-Landing page personal de una sola página, construida con Next.js (App Router) y
-CSS plano. Estética japonesa nocturna: fondo casi negro, un único acento cálido
-y un video de fondo en el hero.
+Landing de una sola página con la oferta de servicios (páginas web, CRM, ERPs,
+plugins de PHP, cloud en AWS, integración de modelos de IA y automatización de
+procesos), más experiencia y proyectos. Next.js (App Router) y CSS plano.
+
+Estética japonesa nocturna: fondo casi negro, un acento cálido dominante y un
+shader de humo en el hero.
 
 ## Correr
 
@@ -27,7 +30,8 @@ components/
   SiteNav.tsx       pill flotante + scroll spy
   MobileMenu.tsx    overlay full-screen (< 768px)
   HeroShader.tsx    canvas del shader de humo
-  Hero.tsx  Metrics.tsx  About.tsx  Experience.tsx  Projects.tsx
+  Hero.tsx  Metrics.tsx  Services.tsx  About.tsx  Experience.tsx  Projects.tsx
+  ServiceGlyph.tsx  ilustraciones SVG del mosaico de servicios
   CoverflowCarousel.tsx  carrusel 3D de proyectos (drag, teclado, loop)
   SiteFooter.tsx    footer fijo que se descubre al final + contacto
   MagneticButton.tsx pills que se inclinan hacia el cursor
@@ -51,8 +55,14 @@ lib/content.ts      todo el contenido en un solo lugar
 | `--shu-dim` | `#8a2820` | hover y bordes |
 | `--kinari` | `#F0EAD6` | texto principal |
 
-`--shu` aparece exactamente en cuatro lugares: el botón "Ver proyectos", los dos
-primeros nodos del timeline, el `outline` de foco y el hover del mailto.
+`--shu` es el acento dominante: CTA principal, los dos nodos recientes del
+timeline, el `outline` de foco, el hover del mailto, el shader del hero y la
+carta ancla de servicios.
+
+Para que el mosaico de servicios distinga sus cartas sin repetir rojo siete
+veces, hay tres acentos secundarios deliberadamente desaturados —`--ai` añil,
+`--matcha` verde y `--kincha` dorado. Cada carta fija un solo `--accent` y de
+ahí salen su ilustración, sus viñetas y su borde en hover.
 
 ## Tipografía
 
