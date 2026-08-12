@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Intelligence Designed To Evolve
 
-## Getting Started
+Single-viewport, full-bleed video-background landing page built with Next.js
+(App Router) and plain CSS.
 
-First, run the development server:
+The whole page fits one viewport and never scrolls: header, hero and stats
+footer are stacked over a looping background video.
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
+npm run build   # production build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+app/
+  layout.tsx        document metadata + CDN font/icon links
+  page.tsx          composes the three viewport regions
+  globals.css       the entire stylesheet (design tokens, layout, animations)
+components/
+  BackgroundVideo.tsx   full-bleed cover video
+  SiteNav.tsx           header: logo, desktop nav pill, sign in, burger
+  MobileMenu.tsx        overlay + sheet menu (<= 720px)
+  Hero.tsx              trust row, headline, subhead, CTA
+  StatsFooter.tsx       four counting metrics
+hooks/
+  useCountUp.ts         IntersectionObserver + easeOutCubic count-up
+  useMobileMenu.ts      open state, Escape / resize handling
+lib/
+  content.ts            nav links, stats and trust brand data
+public/
+  assets/logo.webp
+  fonts/GeistPixel-Circle.woff2
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Typography
 
-## Learn More
+| Family | Use | Source |
+| --- | --- | --- |
+| Inter (400/500/600) | UI text | Google Fonts |
+| BubbledotICG-FinePos | display: headline + stat glyphs | OnlineWebFonts CDN |
+| Geist Pixel Circle | display fallback | local `public/fonts`, from [vercel/geist-pixel-font](https://github.com/vercel/geist-pixel-font) (OFL 1.1) |
+| Font Awesome 6.5.2 Brands | trust row icons | cdnjs |
 
-To learn more about Next.js, take a look at the following resources:
+## Assets
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`public/assets/logo.webp` is a placeholder mark generated for this build.
+Replace the file to swap the brand logo — the header scales it to 72% of the
+circular button automatically.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `backdrop-filter` on the mobile overlay is declared unprefixed only.
+  Adding `-webkit-backdrop-filter` alongside it makes Lightning CSS (Next's CSS
+  transformer) drop the property entirely.
+- The mobile menu uses `z-index: 2` and the header `z-index: 3` while open, so
+  the sheet covers the hero and the close button stays tappable.
