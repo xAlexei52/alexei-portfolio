@@ -1,5 +1,5 @@
 import { SITE } from "@/lib/content";
-import HeroMedia from "./HeroMedia";
+import HeroShader from "./HeroShader";
 
 type HeroProps = {
   cvHref: string | null;
@@ -8,7 +8,7 @@ type HeroProps = {
 export default function Hero({ cvHref }: HeroProps) {
   return (
     <section className="hero" id="inicio">
-      <HeroMedia />
+      <HeroShader />
 
       <div className="hero__inner">
         <div className="hero__content">

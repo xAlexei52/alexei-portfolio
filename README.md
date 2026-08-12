@@ -26,7 +26,7 @@ app/
 components/
   SiteNav.tsx       pill flotante + scroll spy
   MobileMenu.tsx    overlay full-screen (< 768px)
-  HeroMedia.tsx     video o poster segun viewport y reduced-motion
+  HeroShader.tsx    canvas del shader de humo
   Hero.tsx  Metrics.tsx  About.tsx  Experience.tsx  Projects.tsx
   CoverflowCarousel.tsx  carrusel 3D de proyectos (drag, teclado, loop)
   SiteFooter.tsx    footer fijo que se descubre al final + contacto
@@ -62,15 +62,23 @@ primeros nodos del timeline, el `outline` de foco y el hover del mailto.
 | BubbledotICG-FinePos | display: nombre, cifras, fechas, email | OnlineWebFonts CDN |
 | Geist Pixel Circle | fallback display | local, de [vercel/geist-pixel-font](https://github.com/vercel/geist-pixel-font) (OFL 1.1) |
 
-## Media
+## Fondo del hero
 
-`public/assets/` contiene `hero-loop.webm` (280 KB, VP9), `hero-loop.mp4`
-(5 MB, fallback), `hero-poster.jpg` y `og-image.jpg`, todos derivados del mismo
-cinemagraph con ffmpeg.
+Un shader WebGL2 (`lib/smokeBackground.ts`): fBm de 3 octavas con una pasada de
+domain warp, glow radial, viñeta, grano y dither de 1 LSB contra el banding. El
+stop más oscuro de la rampa es `--sumi`, así que el hero funde con el resto de
+la página.
 
-Por debajo de 768px, o con `prefers-reduced-motion: reduce`, solo se sirve el
-poster: el HTML del servidor no contiene `<video>`, así que el loop nunca se
-descarga en datos móviles.
+Pesa 0 bytes de descarga —no hay video ni poster— y solo anima cuando el hero
+está en pantalla, la pestaña visible y sin `prefers-reduced-motion`; en
+cualquier otro caso pinta un único frame estático. Si falta WebGL2, el módulo
+marca `data-webgl="unavailable"`, se oculta el canvas y queda el gradiente CSS
+del contenedor.
+
+Nota para quien lo toque: `destroy()` **no** llama a `WEBGL_lose_context`. React
+reutiliza el mismo canvas al remontar (StrictMode monta dos veces en
+desarrollo) y un contexto forzado a perderse ya no entrega otro — el shader
+caería al gradiente el resto de la sesión.
 
 ## Carrusel de proyectos
 

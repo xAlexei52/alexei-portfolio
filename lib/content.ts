@@ -208,9 +208,3 @@ export const PROJECTS: Project[] = [
     ],
   },
 ];
-
-export const HERO_VIDEO = {
-  webm: "/assets/hero-loop.webm",
-  mp4: "/assets/hero-loop.mp4",
-  poster: "/assets/hero-poster.jpg",
-} as const;
