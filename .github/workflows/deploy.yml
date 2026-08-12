@@ -53,7 +53,7 @@ jobs:
           # The FTP user already lands in public_html, so the site root is just
           # `./` — pointing at public_html/ here would nest it one level deep.
           local-dir: ./out/
-          server-dir: ./
+          server-dir: /domains/alexeipalacios.cloud/public_html/
           # Paths the hosting panel owns and that must survive a sync. These
           # are skipped both ways, so nothing here is uploaded or deleted —
           # .htaccess is deliberately absent: it ships from public/.
