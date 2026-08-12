@@ -1,0 +1,65 @@
+name: Deploy
+
+# Builds the static export and mirrors it into public_html over FTP.
+on:
+  push:
+    branches: [main]
+  # Lets you re-deploy the current main from the Actions tab without a commit.
+  workflow_dispatch:
+
+# A second push while a deploy is mid-upload would interleave two FTP sessions
+# over the same directory. Queue them instead, and never cancel one in flight —
+# a half-uploaded public_html is a broken site.
+concurrency:
+  group: deploy-ftp
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - name: Build static export
+        # Baked into the HTML at build time, so it has to be set here rather
+        # than on the server: it resolves the absolute Open Graph URLs.
+        env:
+          NEXT_PUBLIC_SITE_URL: https://alexeipalacios.cloud
+        run: npm run build
+
+      - name: Verify the export looks complete
+        # Cheap guard against uploading an empty or half-built directory over a
+        # working site. `next build` can exit 0 with output: 'export' misconfigured.
+        run: |
+          test -f out/index.html || { echo "::error::out/index.html missing — aborting deploy"; exit 1; }
+          test -d out/_next     || { echo "::error::out/_next missing — aborting deploy"; exit 1; }
+
+      - name: Upload to public_html
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # The FTP user already lands in public_html, so the site root is just
+          # `./` — pointing at public_html/ here would nest it one level deep.
+          local-dir: ./out/
+          server-dir: ./
+          # Paths the hosting panel owns and that must survive a sync. These
+          # are skipped both ways, so nothing here is uploaded or deleted —
+          # .htaccess is deliberately absent: it ships from public/.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            cgi-bin/**
+            .well-known/**
