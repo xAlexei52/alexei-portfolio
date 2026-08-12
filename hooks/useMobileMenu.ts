@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-const DESKTOP_BREAKPOINT = 720;
+const DESKTOP_BREAKPOINT = 768;
 
 /**
  * Open/close state for the mobile sheet menu. Mirrors the state onto
