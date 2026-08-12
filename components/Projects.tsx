@@ -1,5 +1,16 @@
 import { PROJECTS } from "@/lib/content";
+import { CoverflowCarousel, type CoverflowSlide } from "./CoverflowCarousel";
 import Reveal from "./Reveal";
+
+const slides: CoverflowSlide[] = PROJECTS.map((project) => ({
+  src: project.image,
+  alt: project.imageAlt,
+  title: project.title,
+  subtitle: project.description,
+  meta: project.meta,
+  tags: project.stack,
+  href: project.href,
+}));
 
 export default function Projects() {
   return (
@@ -12,35 +23,14 @@ export default function Projects() {
         <h2 className="section__title">Proyectos</h2>
       </Reveal>
 
-      <div className="projects__grid">
-        {PROJECTS.map((project, index) => (
-          <Reveal key={project.title} delay={index * 0.06}>
-            <article className="project">
-              <h3 className="project__title">{project.title}</h3>
-              <p className="project__description">{project.description}</p>
-
-              <ul className="project__tags">
-                {project.stack.map((tech) => (
-                  <li className="tag" key={tech}>
-                    {tech}
-                  </li>
-                ))}
-              </ul>
-
-              {project.href ? (
-                <a
-                  className="project__link"
-                  href={project.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  Ver proyecto
-                </a>
-              ) : null}
-            </article>
-          </Reveal>
-        ))}
-      </div>
+      <CoverflowCarousel
+        slides={slides}
+        fade={0.14}
+        label="Proyectos seleccionados"
+        showCaption
+        showPagination
+        showNavigation
+      />
     </section>
   );
 }

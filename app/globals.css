@@ -39,6 +39,9 @@ html {
   scroll-behavior: smooth;
   /* Clears the floating nav when jumping to a section. */
   scroll-padding-top: 104px;
+  /* `clip` rather than `hidden`: it contains the carousel bleed without
+     turning the root into a scroll container. */
+  overflow-x: clip;
 }
 
 html,
@@ -54,7 +57,7 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body.menu-open {
@@ -86,8 +89,6 @@ body.menu-open {
   width: var(--shell);
   margin: 0 auto;
   padding: clamp(72px, 12vh, 128px) 0;
-  /* Clips the kanji watermark to the content column. */
-  overflow: hidden;
 }
 
 .section__title {
@@ -103,7 +104,7 @@ body.menu-open {
 .kanji {
   position: absolute;
   top: clamp(28px, 7vh, 72px);
-  right: -0.1em;
+  right: 0;
   z-index: 0;
   font-size: clamp(96px, 17vw, 210px);
   line-height: 0.85;
@@ -535,67 +536,164 @@ body.menu-open {
    Projects
 --------------------------------------------------------------------------- */
 
-.projects__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 22px);
+.coverflow {
+  width: 100%;
 }
 
-/* The reveal wrapper is the grid item, so it has to pass height through. */
-.projects__grid > .reveal {
-  display: flex;
+.coverflow__stage {
+  position: relative;
 }
 
-.project {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding: clamp(20px, 2.4vw, 26px);
+.coverflow__frame {
+  /* Vertical padding keeps the drop shadows clear of the overflow clip. */
+  padding: clamp(24px, 5vh, 40px) 0;
+  /* Bleeds past the content column so the outer cards run off the page edge
+     instead of being sliced at the column boundary. */
+  margin-inline: calc(-1 * clamp(20px, 6vw, 130px));
+  overflow: hidden;
+  outline: none;
+  cursor: grab;
+}
+
+.coverflow__frame:active {
+  cursor: grabbing;
+}
+
+.coverflow__track {
+  position: relative;
+  user-select: none;
+  transform-style: preserve-3d;
+}
+
+.coverflow__card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--cf-card);
+  aspect-ratio: 1;
+  overflow: hidden;
   border: 1px solid var(--kinari-30);
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--sumi-soft);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  will-change: transform;
+}
+
+.coverflow__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  display: block;
+}
+
+.coverflow__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--kinari-30);
+  border-radius: 50%;
+  background: #ffffff0d;
+  backdrop-filter: blur(12px);
+  color: var(--kinari);
+  cursor: pointer;
+  transform: translateY(-50%);
   transition:
-    border-color 0.3s ease,
-    transform 0.3s var(--ease-out-expo);
+    border-color 0.25s ease,
+    background 0.25s ease;
 }
 
-.project:hover {
-  border-color: var(--shu-dim);
-  transform: translateY(-2px);
+.coverflow__nav:hover {
+  border-color: var(--kinari-60);
+  background: #ffffff1a;
 }
 
-.project__title {
+.coverflow__nav svg {
+  width: 20px;
+  height: 20px;
+}
+
+.coverflow__nav--prev {
+  left: 0;
+}
+
+.coverflow__nav--next {
+  right: 0;
+}
+
+.coverflow__caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(6px, 1.5vh, 14px);
+  padding: 0 clamp(12px, 4vw, 24px);
+  text-align: center;
+  animation: captionIn 0.3s ease both;
+}
+
+.coverflow__title {
   margin: 0;
-  font-size: 17px;
+  font-size: clamp(16px, 1.9vw, 19px);
   font-weight: 500;
-  line-height: 1.35;
+  letter-spacing: -0.015em;
   color: var(--kinari);
 }
 
-.project__description {
-  margin: 12px 0 0;
+.coverflow__subtitle {
+  max-width: 56ch;
+  margin: 10px 0 0;
   font-size: 14px;
   line-height: 1.7;
   color: var(--kinari-60);
 }
 
-.project__tags {
+.coverflow__tags {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 7px;
-  margin: auto 0 0;
-  padding: clamp(18px, 2.4vh, 24px) 0 0;
+  margin: clamp(16px, 2.4vh, 22px) 0 0;
+  padding: 0;
   list-style: none;
 }
 
-.project__tags .tag {
+.coverflow__tags .tag {
   padding: 5px 10px;
   font-size: 11.5px;
 }
 
-.project__link {
-  align-self: flex-end;
-  margin-top: 14px;
+.coverflow__meta {
+  width: 100%;
+  max-width: 300px;
+  margin: clamp(18px, 2.6vh, 26px) 0 0;
+  font-size: 12px;
+}
+
+.coverflow__meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--kinari-30);
+}
+
+.coverflow__meta-row dt {
+  color: var(--kinari-60);
+}
+
+.coverflow__meta-row dd {
+  margin: 0;
+  font-weight: 500;
+  color: var(--kinari);
+}
+
+.coverflow__link {
+  margin-top: 18px;
   font-size: 12.5px;
   color: var(--kinari-60);
   text-decoration: none;
@@ -603,8 +701,41 @@ body.menu-open {
   transition: color 0.25s ease;
 }
 
-.project__link:hover {
+.coverflow__link:hover {
   color: var(--kinari);
+}
+
+.coverflow__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: clamp(22px, 3.5vh, 32px);
+}
+
+.coverflow__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--kinari);
+  opacity: 0.3;
+  cursor: pointer;
+  transition: opacity 0.25s ease;
+}
+
+.coverflow__dot.is-active {
+  opacity: 1;
+}
+
+@keyframes captionIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -828,8 +959,12 @@ body.menu-open {
     gap: clamp(28px, 5vh, 40px);
   }
 
-  .projects__grid {
-    grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 560px) {
+  /* The arrows would sit on top of the centre card at this width. */
+  .coverflow__nav {
+    display: none;
   }
 }
 

@@ -28,6 +28,7 @@ components/
   MobileMenu.tsx    overlay full-screen (< 768px)
   HeroMedia.tsx     video o poster segun viewport y reduced-motion
   Hero.tsx  Metrics.tsx  About.tsx  Experience.tsx  Projects.tsx  Contact.tsx
+  CoverflowCarousel.tsx  carrusel 3D de proyectos (drag, teclado, loop)
   Reveal.tsx        fade + 12px al entrar en viewport
 hooks/
   useMediaQuery.ts  matchMedia via useSyncExternalStore
@@ -67,6 +68,18 @@ cinemagraph con ffmpeg.
 Por debajo de 768px, o con `prefers-reduced-motion: reduce`, solo se sirve el
 poster: el HTML del servidor no contiene `<video>`, así que el loop nunca se
 descarga en datos móviles.
+
+## Carrusel de proyectos
+
+`CoverflowCarousel` no usa librerías: el efecto sale de una posición fraccional
+única (`posRef`) que se pinta directo al DOM en cada frame, sin re-render de
+React. El loop dobla la distancia por el lado corto del anillo, así que no hay
+nodos clonados. Acepta drag, flechas del teclado, botones y paginación.
+
+Las imágenes en `public/assets/projects/` son placeholders geométricos
+generados en la paleta del sitio. Reemplaza cada `placeholder-N.webp` por una
+captura real (cuadrada) y no hace falta tocar el código: las rutas viven en
+`lib/content.ts`.
 
 ## Pendientes de contenido
 

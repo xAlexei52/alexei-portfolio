@@ -107,6 +107,9 @@ export type Project = {
   title: string;
   description: string;
   stack: string[];
+  image: string;
+  imageAlt: string;
+  meta: { label: string; value: string }[];
   href?: string;
 };
 
@@ -114,20 +117,95 @@ export const PROJECTS: Project[] = [
   {
     title: "Pipeline de siniestros con IA",
     description:
-      "Sistema serverless en AWS que analiza PDFs de reclamos por daños de agua, verifica cumplimiento IICRC y genera reportes de auditoría. ~27 Lambdas, DynamoDB con GSIs, Bedrock, frontend en React.",
+      "Sistema serverless en AWS que analiza PDFs de reclamos por daños de agua, verifica cumplimiento IICRC y genera reportes de auditoría.",
     stack: ["AWS Lambda", "DynamoDB", "Bedrock", "React"],
+    image: "/assets/projects/placeholder-1.webp",
+    imageAlt: "Pipeline de siniestros con IA",
+    meta: [
+      { label: "Tipo", value: "Plataforma serverless" },
+      { label: "Escala", value: "~27 Lambdas" },
+      { label: "Rol", value: "AI & Cloud Engineer" },
+    ],
+  },
+  {
+    title: "ERP de RL Meats",
+    description:
+      "ERP multi-ciudad para manejo de carne: entradas de trailer, órdenes de manufactura, inventario, ventas, pagos y gastos. Reportes en PDF y Excel, permisos por ciudad y dashboards de utilidad.",
+    stack: ["Angular", "Node.js", "Express", "Sequelize", "MySQL"],
+    image: "/assets/projects/placeholder-2.webp",
+    imageAlt: "ERP de RL Meats",
+    meta: [
+      { label: "Tipo", value: "ERP a medida" },
+      { label: "Alcance", value: "Multi-ciudad" },
+      { label: "Rol", value: "Full stack" },
+    ],
+  },
+  {
+    title: "rlmeats.com.mx",
+    description:
+      "Sitio corporativo de RL Meats: catálogo de producto, presencia de marca y formulario de contacto con notificaciones por correo.",
+    stack: ["Laravel 12", "PHP 8.2", "TailwindCSS", "Vite"],
+    image: "/assets/projects/placeholder-3.webp",
+    imageAlt: "Sitio web de RL Meats",
+    meta: [
+      { label: "Tipo", value: "Sitio corporativo" },
+      { label: "Cliente", value: "RL Meats" },
+      { label: "Rol", value: "Diseño y desarrollo" },
+    ],
+    href: "https://rlmeats.com.mx",
+  },
+  {
+    title: "rghfoodgroup.com",
+    description:
+      "Sitio corporativo de RGH Food Group, construido sobre la misma base Laravel con layouts propios y build de assets en Vite.",
+    stack: ["Laravel 12", "PHP 8.2", "TailwindCSS", "Vite"],
+    image: "/assets/projects/placeholder-4.webp",
+    imageAlt: "Sitio web de RGH Food Group",
+    meta: [
+      { label: "Tipo", value: "Sitio corporativo" },
+      { label: "Cliente", value: "RGH Food Group" },
+      { label: "Rol", value: "Diseño y desarrollo" },
+    ],
+    href: "https://rghfoodgroup.com",
   },
   {
     title: "ERP de logística de paquetería",
     description:
       "Plataforma completa con pagos integrados, rastreo en tiempo real y dashboards de utilidad por servicio, por usuario y agregados.",
     stack: ["Angular", "Node.js", "TypeScript", "MySQL"],
+    image: "/assets/projects/placeholder-5.webp",
+    imageAlt: "ERP de logística de paquetería",
+    meta: [
+      { label: "Tipo", value: "ERP a medida" },
+      { label: "Foco", value: "Rastreo y pagos" },
+      { label: "Rol", value: "Full stack" },
+    ],
   },
   {
     title: "Plugin WooCommerce + Superenvíos",
     description:
-      "Cotización y generación de guías automatizada, con portal admin para recargas, cancelaciones y comisiones.",
+      "Cotización y generación de guías automatizada, con portal admin para recargas, cancelaciones y comisiones por usuario.",
     stack: ["PHP", "WordPress", "REST API"],
+    image: "/assets/projects/placeholder-6.webp",
+    imageAlt: "Plugin de WooCommerce para Superenvíos",
+    meta: [
+      { label: "Tipo", value: "Plugin WordPress" },
+      { label: "Integración", value: "API Superenvíos" },
+      { label: "Rol", value: "PHP Developer" },
+    ],
+  },
+  {
+    title: "Rediseño de PRACOFI",
+    description:
+      "Rediseño del sitio de PRACOFI como proyecto freelance, enfocado en jerarquía de contenido y rendimiento en conexiones lentas.",
+    stack: ["PHP", "JavaScript", "SCSS"],
+    image: "/assets/projects/placeholder-7.webp",
+    imageAlt: "Rediseño del sitio de PRACOFI",
+    meta: [
+      { label: "Tipo", value: "Sitio corporativo" },
+      { label: "Modalidad", value: "Freelance" },
+      { label: "Rol", value: "Diseño y desarrollo" },
+    ],
   },
 ];
 
