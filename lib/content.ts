@@ -149,8 +149,9 @@ export const METRICS: Metric[] = [
   { target: 27, suffix: "+", decimals: 0, label: "funciones Lambda en producción" },
 ];
 
+/** Runs under ABOUT_QUOTE, so it must not repeat the same framing. */
 export const ABOUT_TEXT =
-  "Ingeniero de software con base en Zapopan. Trabajo en la intersección de cloud e IA — arquitectura serverless en AWS, integración de modelos de Bedrock en procesos empresariales, y frontends que no se sienten pesados. Titulado en Ingeniería de Software por la Universidad Tecnológica de Jalisco.";
+  "Arquitectura serverless en AWS, modelos de Bedrock integrados en procesos empresariales y frontends que no se sienten pesados. Me interesa el punto donde la infraestructura deja de ser un costo y empieza a resolver algo concreto del negocio: un reporte que ya no se hace a mano, un proceso que deja de esperar a alguien.";
 
 export type StackGroup = { category: string; items: string[] };
 
@@ -230,7 +231,7 @@ export const PROJECTS: Project[] = [
     description:
       "Sistema serverless en AWS que analiza PDFs de reclamos por daños de agua, verifica cumplimiento IICRC y genera reportes de auditoría.",
     stack: ["AWS Lambda", "DynamoDB", "Bedrock", "React"],
-    image: "/assets/projects/placeholder-1.webp",
+    image: "/assets/projects/pipeline-ia.webp",
     imageAlt: "Pipeline de siniestros con IA",
     meta: [
       { label: "Tipo", value: "Plataforma serverless" },
@@ -243,7 +244,7 @@ export const PROJECTS: Project[] = [
     description:
       "ERP multi-ciudad para manejo de carne: entradas de trailer, órdenes de manufactura, inventario, ventas, pagos y gastos. Reportes en PDF y Excel, permisos por ciudad y dashboards de utilidad.",
     stack: ["Angular", "Node.js", "Express", "Sequelize", "MySQL"],
-    image: "/assets/projects/placeholder-2.webp",
+    image: "/assets/projects/erp-rlmeats.webp",
     imageAlt: "ERP de RL Meats",
     meta: [
       { label: "Tipo", value: "ERP a medida" },
@@ -256,7 +257,7 @@ export const PROJECTS: Project[] = [
     description:
       "Sitio corporativo de RL Meats: catálogo de producto, presencia de marca y formulario de contacto con notificaciones por correo.",
     stack: ["Laravel 12", "PHP 8.2", "TailwindCSS", "Vite"],
-    image: "/assets/projects/placeholder-3.webp",
+    image: "/assets/projects/rlmeats.webp",
     imageAlt: "Sitio web de RL Meats",
     meta: [
       { label: "Tipo", value: "Sitio corporativo" },
@@ -270,7 +271,7 @@ export const PROJECTS: Project[] = [
     description:
       "Sitio corporativo de RGH Food Group, construido sobre la misma base Laravel con layouts propios y build de assets en Vite.",
     stack: ["Laravel 12", "PHP 8.2", "TailwindCSS", "Vite"],
-    image: "/assets/projects/placeholder-4.webp",
+    image: "/assets/projects/rghfood.webp",
     imageAlt: "Sitio web de RGH Food Group",
     meta: [
       { label: "Tipo", value: "Sitio corporativo" },
@@ -284,7 +285,7 @@ export const PROJECTS: Project[] = [
     description:
       "Plataforma completa con pagos integrados, rastreo en tiempo real y dashboards de utilidad por servicio, por usuario y agregados.",
     stack: ["Angular", "Node.js", "TypeScript", "MySQL"],
-    image: "/assets/projects/placeholder-5.webp",
+    image: "/assets/projects/erp-logistica.webp",
     imageAlt: "ERP de logística de paquetería",
     meta: [
       { label: "Tipo", value: "ERP a medida" },
@@ -297,7 +298,7 @@ export const PROJECTS: Project[] = [
     description:
       "Cotización y generación de guías automatizada, con portal admin para recargas, cancelaciones y comisiones por usuario.",
     stack: ["PHP", "WordPress", "REST API"],
-    image: "/assets/projects/placeholder-6.webp",
+    image: "/assets/projects/plugin-woo.webp",
     imageAlt: "Plugin de WooCommerce para Superenvíos",
     meta: [
       { label: "Tipo", value: "Plugin WordPress" },
@@ -310,7 +311,7 @@ export const PROJECTS: Project[] = [
     description:
       "Rediseño del sitio de PRACOFI como proyecto freelance, enfocado en jerarquía de contenido y rendimiento en conexiones lentas.",
     stack: ["PHP", "JavaScript", "SCSS"],
-    image: "/assets/projects/placeholder-7.webp",
+    image: "/assets/projects/pracofi.webp",
     imageAlt: "Rediseño del sitio de PRACOFI",
     meta: [
       { label: "Tipo", value: "Sitio corporativo" },

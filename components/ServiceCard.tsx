@@ -54,9 +54,17 @@ function entryOrigin(rect: DOMRect, clientX: number, clientY: number) {
 export default function ServiceCard({
   service,
   index,
+  open,
+  dimmed,
+  onToggle,
 }: {
   service: Service;
   index: number;
+  /** This card is the expanded one. */
+  open: boolean;
+  /** Another card is expanded, so this one recedes. */
+  dimmed: boolean;
+  onToggle: () => void;
 }) {
   const cardRef = useRef<HTMLElement>(null);
   const surfaceRef = useRef<CardHandle | null>(null);
@@ -271,18 +279,35 @@ export default function ServiceCard({
   };
 
   const onPointerLeave = () => {
-    surfaceRef.current?.setHover(0);
+    // While expanded the surface stays lit: the card is the focus of the
+    // section, not something the pointer happens to be over.
+    surfaceRef.current?.setHover(open ? 1 : 0);
   };
+
+  /* Keep the surface hot for as long as the card is open. */
+  useEffect(() => {
+    surfaceRef.current?.setHover(open ? 1 : 0);
+  }, [open]);
 
   return (
     <article
       ref={cardRef}
       className={`service service--${service.accent}`}
       data-featured={featured ? "true" : undefined}
+      data-open={open ? "true" : undefined}
+      data-dimmed={dimmed ? "true" : undefined}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
-      /* The detail only appears on hover, so the card has to be reachable by
-         keyboard too — :focus-within alone never fires without a tab stop. */
+      onClick={onToggle}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onToggle();
+        }
+      }}
+      role="button"
+      aria-expanded={open}
+      aria-label={`${service.title}. Ver detalle`}
       tabIndex={0}
       onFocus={() => surfaceRef.current?.setHover(1)}
       onBlur={() => surfaceRef.current?.setHover(0)}
@@ -296,9 +321,22 @@ export default function ServiceCard({
       {/* Resting state: the title alone, large, at the foot of the card. */}
       <h3 className="service__title">{service.title}</h3>
 
-      {/* Revealed on hover and on keyboard focus. Not hidden from assistive
-          tech — it is always in the accessibility tree and reachable by tab,
-          only visually withheld until the card is engaged. */}
+      {/* Cue that the card opens. Appears on hover, hidden once expanded. */}
+      <span className="service__cue" aria-hidden="true">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.2a1.4 1.4 0 0 1 2.8 0V11m0-.8a1.4 1.4 0 0 1 2.8 0v1.3m0-.6a1.4 1.4 0 0 1 2.7 0V15a6 6 0 0 1-6 6h-1.8a5 5 0 0 1-3.8-1.8L4 15.2a1.5 1.5 0 0 1 2.3-2l2.7 2.4"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        Ver detalle
+      </span>
+
+      {/* Detail. Collapsed inline on hover; laid out as a right-hand panel
+          once the card is expanded across the mosaic. */}
       <div className="service__reveal">
         {/* Single grid child: the 0fr → 1fr collapse only measures one row. */}
         <div className="service__reveal-inner">
@@ -309,6 +347,19 @@ export default function ServiceCard({
               <li key={bullet}>{bullet}</li>
             ))}
           </ul>
+
+          {open ? (
+            <button
+              type="button"
+              className="service__close"
+              onClick={(event) => {
+                event.stopPropagation();
+                onToggle();
+              }}
+            >
+              Cerrar
+            </button>
+          ) : null}
         </div>
       </div>
     </article>
