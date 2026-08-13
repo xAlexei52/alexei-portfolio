@@ -283,7 +283,7 @@ body.menu-open {
      the top so it cannot drift on very tall screens, but the offset is large
      enough that it no longer reads as pinned under the nav. */
   align-items: flex-start;
-  min-height: 100vh;
+  min-height: 75vh;
   min-height: 100dvh;
   padding-top: clamp(150px, 24vh, 310px);
   overflow: hidden;
