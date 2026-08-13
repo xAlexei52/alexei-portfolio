@@ -29,7 +29,7 @@ out vec4 fragColor;
 #define LACUNARITY     2.00
 #define SPEED_WARP     0.060
 #define SPEED_BASE     0.023
-#define WARP_AMOUNT    0.35
+#define WARP_AMOUNT    0.70
 #define GAMMA          2.6
 #define GLOW_CENTER    vec2(0.12, 0.015)
 #define GLOW_FALLOFF   3.2

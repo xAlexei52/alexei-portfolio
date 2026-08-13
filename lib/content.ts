@@ -6,12 +6,21 @@ export const SITE = {
   github: "https://github.com/xAlexei52",
   /** Served from public/ when the file is present; the UI hides the link if not. */
   cvPath: "/cv-alexei-palacios.pdf",
+  /** Two rendered lines. The Hero paints the last word of the second in the
+      accent, so the split lives there rather than in another array entry. */
   headline: ["Software que piensa,", "automatiza y escala."],
   intro:
-    "Soy ingeniero de software en Zapopan. Desde 2022 construyo los sistemas que sostienen operaciones reales: pipelines serverless en AWS, ERPs a medida y modelos de IA metidos donde de verdad ahorran horas. Trabajo de punta a punta, de la arquitectura al frontend.",
+    "Desde 2022 construyo los sistemas que sostienen operaciones reales: pipelines serverless en AWS, ERPs a medida y modelos de IA puestos donde de verdad ahorran horas.",
   description:
     "Desarrollo a medida en Zapopan, México: páginas web, CRM, ERPs, plugins de PHP, arquitectura serverless en AWS, integración de modelos de IA y automatización de procesos.",
 } as const;
+
+/** Counterweight column in the hero: a value over a quiet label. */
+export const HERO_FACTS = [
+  { value: "2022", label: "construyendo en producción" },
+  { value: "AWS", label: "Lambda · Bedrock · DynamoDB" },
+  { value: "MX", label: "remoto · Zapopan, Jalisco" },
+];
 
 /** Reads as a capability strip under the hero copy. */
 export const SOLUTIONS = [
@@ -34,7 +43,11 @@ export const NAV_LINKS: NavLink[] = [
   { label: "Contacto", href: "#contacto", id: "contacto" },
 ];
 
-export type ServiceAccent = "shu" | "ai" | "matcha" | "kincha";
+/**
+ * One hue, four saturations. `shu` is the most saturated and belongs to the
+ * anchor card; the rest step down so rank reads as intensity, not as hue.
+ */
+export type ServiceAccent = "shu" | "shu-2" | "shu-3" | "shu-4";
 export type ServiceGlyph =
   | "ai"
   | "automation"
@@ -69,7 +82,7 @@ export const SERVICES: Service[] = [
     description:
       "Flujos event-driven que quitan el trabajo manual entre sistemas, con reintentos y registro de cada paso.",
     bullets: ["Event-driven", "Integraciones por API", "Reportes automáticos"],
-    accent: "kincha",
+    accent: "shu-2",
     glyph: "automation",
   },
   {
@@ -78,7 +91,7 @@ export const SERVICES: Service[] = [
     description:
       "Arquitectura serverless que escala con la demanda y no cuesta cuando nadie la usa.",
     bullets: ["Lambda y DynamoDB", "Infraestructura con CDK", "Observabilidad"],
-    accent: "ai",
+    accent: "shu-3",
     glyph: "cloud",
   },
   {
@@ -87,7 +100,7 @@ export const SERVICES: Service[] = [
     description:
       "Inventario, manufactura, ventas y costos en un solo sistema, modelado sobre cómo opera tu negocio.",
     bullets: ["Multi-sucursal", "Reportes PDF y Excel", "Permisos por rol"],
-    accent: "matcha",
+    accent: "shu-4",
     glyph: "erp",
   },
   {
@@ -96,7 +109,7 @@ export const SERVICES: Service[] = [
     description:
       "Pipeline comercial y seguimiento de clientes, con la información donde tu equipo ya trabaja.",
     bullets: ["Etapas y embudo", "Historial por cliente", "Tableros de cierre"],
-    accent: "ai",
+    accent: "shu-3",
     glyph: "crm",
   },
   {
@@ -105,7 +118,7 @@ export const SERVICES: Service[] = [
     description:
       "Sitios corporativos rápidos y fáciles de editar. Nada de plantillas genéricas.",
     bullets: ["SEO técnico", "Core Web Vitals", "Formularios y correo"],
-    accent: "kincha",
+    accent: "shu-2",
     glyph: "web",
   },
   {
@@ -114,7 +127,7 @@ export const SERVICES: Service[] = [
     description:
       "Extensiones a medida para WooCommerce y WordPress cuando el plugin que necesitas no existe.",
     bullets: ["WooCommerce", "APIs de terceros", "Panel administrativo"],
-    accent: "matcha",
+    accent: "shu-4",
     glyph: "plugin",
   },
 ];

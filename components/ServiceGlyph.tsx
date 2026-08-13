@@ -25,11 +25,33 @@ export default function ServiceGlyph({ name }: { name: GlyphName }) {
         <g stroke={structure} strokeWidth="1">
           <path d="M8 12h22M8 26h22M8 40h22M8 54h22" />
         </g>
-        <g stroke="currentColor" strokeWidth="1.2" opacity="0.85">
-          <path d="M30 12c18 0 22 18 30 24M30 26c14 0 18 8 30 10M30 40c14 0 18-2 30-4M30 54c18 0 22-18 30-24" />
+        {/* Split into one path per line: the pulse rides a single feed at a
+            time via getPointAtLength, which needs separate elements. */}
+        <g className="glyph__feed" stroke="currentColor" strokeWidth="1.2" opacity="0.85">
+          <path d="M30 12c18 0 22 18 30 24" />
+          <path d="M30 26c14 0 18 8 30 10" />
+          <path d="M30 40c14 0 18-2 30-4" />
+          <path d="M30 54c18 0 22-18 30-24" />
         </g>
-        <circle cx="62" cy="36" r="7" stroke="currentColor" strokeWidth="1.4" />
+        <circle
+          className="glyph__node"
+          cx="62"
+          cy="36"
+          r="7"
+          stroke="currentColor"
+          strokeWidth="1.4"
+        />
         <circle cx="62" cy="36" r="2.4" fill="currentColor" stroke="none" />
+        {/* Parked at the node until a pulse starts; JS drives cx/cy. */}
+        <circle
+          className="glyph__pulse"
+          cx="62"
+          cy="36"
+          r="2.6"
+          fill="currentColor"
+          stroke="none"
+          opacity="0"
+        />
         <path d="M69 36h16" stroke="currentColor" strokeWidth="1.4" />
         <rect
           x="85"

@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
    Fonts
-   Inter (UI) and BubbledotICG-FinePos (display) load from CDNs in layout.tsx.
+   Poppins (UI) and BubbledotICG-FinePos (display) load from CDNs in layout.tsx.
    Geist Pixel Circle is the local display fallback.
 --------------------------------------------------------------------------- */
 
@@ -22,16 +22,24 @@
   --kinari-30: #f0ead64d;
   --kinari-08: #f0ead614;
 
-  /* Secondary accents for the services mosaic. Desaturated on purpose: they
-     have to differentiate cards without competing with --shu. */
-  --ai: #6d90ad; /* añil */
-  --matcha: #7d9b6e;
-  --kincha: #c09055;
+  /* Services mosaic accents. One hue, four saturations: rank reads as
+     intensity rather than as four competing colours. --shu stays the most
+     saturated and marks the anchor card; the rest step down toward the
+     structural grey without ever leaving the red family. */
+  --shu-2: #b8524a; /* automatización */
+  --shu-3: #97564f; /* cloud, crm */
+  --shu-4: #7c5852; /* erp, plugins */
 
-  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  /* Tint the featured card rises to on hover. */
+  --shu-tint: #6b1418;
+
+  --font-sans: "Poppins", "Segoe UI", system-ui, sans-serif;
   --font-display: "BubbledotICG-FinePos", "Geist Pixel Circle", monospace;
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
   --nav-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  /* Radius on the four outward-facing corners of the services mosaic. Large
+     enough to read as the shape of the whole slab across the grid gap. */
+  --mosaic-radius: 44px;
   --shell: min(1080px, 100% - clamp(32px, 8vw, 96px));
 }
 
@@ -120,7 +128,10 @@ body.menu-open {
   user-select: none;
 }
 
-.section > *:not(.kanji) {
+/* Lifts real content above the kanji watermark. The card surface is excluded
+   too: it is a fixed backdrop, and being pulled into the flow here would give
+   it a layout box of its own below the mosaic. */
+.section > *:not(.kanji):not(.card-surface) {
   position: relative;
   z-index: 1;
 }
@@ -254,9 +265,13 @@ body.menu-open {
 .hero {
   position: relative;
   display: flex;
-  align-items: center;
+  /* Optically centred rather than true-centred: the block is measured from
+     the top so it cannot drift on very tall screens, but the offset is large
+     enough that it no longer reads as pinned under the nav. */
+  align-items: flex-start;
   min-height: 100vh;
   min-height: 100dvh;
+  padding-top: clamp(150px, 24vh, 310px);
   overflow: hidden;
 }
 
@@ -307,65 +322,150 @@ body.menu-open {
   z-index: 1;
   width: var(--shell);
   margin: 0 auto;
-  padding: 120px 0 60px;
+  /* Was 120px: the block sat too low with dead space above it. */
+  padding: 20px 0 60px;
+}
+
+/* Copy on the left, facts on the right. `items-start` so the facts hang from
+   the top of the copy rather than centring against it. */
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  align-items: start;
+  gap: 32px;
 }
 
 .hero__content {
-  /* Wide enough that each authored headline line survives on one row — the
-     display face is monospaced, so it eats horizontal room fast. */
-  max-width: min(72%, 900px);
+  min-width: 0;
 }
 
+/* Rhythm below is deliberately uneven: tight inside a group, loose between
+   groups, so the block reads as three clusters instead of one list. */
 .hero__eyebrow {
-  display: block;
-  margin: 0 0 clamp(18px, 3vh, 28px);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 14px;
+  /* Overrides .label, which stays at its own scale everywhere else. */
+  font-size: 14px;
+}
+
+.hero__dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--shu);
 }
 
 .hero__headline {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(26px, 5.1vw, 66px);
-  line-height: 1.1;
+  /* Scaled to the left column, not the viewport: the display face is
+     monospaced and each authored line has to survive on one row. */
+  font-size: clamp(27px, 3.9vw, 53px);
+  line-height: 1.12;
   letter-spacing: -0.05em;
   color: var(--kinari);
+  /* Holds each authored line on one row. Released on narrow screens below,
+     where the copy has to be allowed to wrap rather than overflow. */
+  text-wrap: nowrap;
 }
 
-.hero__headline span {
+@media (max-width: 560px) {
+  .hero__headline {
+    text-wrap: balance;
+  }
+}
+
+.hero__headline > span {
   display: block;
 }
 
+/* Ties the headline to the glow behind it. */
+.hero__headline-accent {
+  color: var(--shu);
+}
+
 .hero__intro {
-  max-width: 58ch;
-  margin: clamp(18px, 3vh, 28px) 0 0;
-  font-size: clamp(14.5px, 1.35vw, 16.5px);
-  line-height: 1.7;
+  /* Two to three lines at this measure. */
+  max-width: 42ch;
+  margin: 18px 0 0;
+  font-size: clamp(17px, 1.6vw, 20px);
+  line-height: 1.65;
   color: var(--kinari-60);
-}
-
-.hero__solutions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: clamp(20px, 3vh, 28px) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.hero__solutions li {
-  padding: 6px 12px;
-  border: 1px solid var(--kinari-30);
-  border-radius: 999px;
-  font-size: 12px;
-  color: var(--kinari-60);
-  white-space: nowrap;
 }
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: clamp(26px, 4vh, 38px);
+  align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+/* Scoped to the hero: .btn is shared with the footer, which keeps its own
+   scale. */
+.hero__actions .btn {
+  padding: 16px clamp(26px, 3vw, 34px);
+  font-size: 17px;
+}
+
+/* Demoted from a button: it is the third option, not a third peer. */
+.hero__cv {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 4px;
+  font-size: 15.5px;
+  color: var(--kinari-60);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.hero__cv:hover {
+  color: var(--kinari);
+}
+
+.hero__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0;
+  padding-left: 24px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero__fact-value {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--kinari);
+}
+
+.hero__fact-label {
+  margin: 5px 0 0;
+  font-size: 13.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  color: var(--kinari-60);
+}
+
+/* Full-bleed rule under both columns: this is what squares off the right edge
+   of the composition, so it sits outside .hero__grid. */
+.hero__solutions {
+  margin: 36px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.09em;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
 }
 
 .btn {
@@ -485,48 +585,198 @@ body.menu-open {
   grid-column: span 2;
 }
 
+/* Only the cells sitting at the corners of the mosaic carry a large radius,
+   and only on the corner that faces out. The interior corners stay tight, so
+   the seven cards read as one slab with rounded ends rather than seven pills.
+
+   Which card lands in which corner changes with the column count, and the
+   grid is irregular (two cells span two columns, one spans two rows), so the
+   corners are measured at runtime by useMosaicCorners and flagged with
+   data-corner rather than guessed per id here. */
+.service[data-corner~="tl"] {
+  border-top-left-radius: var(--mosaic-radius);
+}
+
+.service[data-corner~="tr"] {
+  border-top-right-radius: var(--mosaic-radius);
+}
+
+.service[data-corner~="br"] {
+  border-bottom-right-radius: var(--mosaic-radius);
+}
+
+.service[data-corner~="bl"] {
+  border-bottom-left-radius: var(--mosaic-radius);
+}
+
+/* The one canvas every card's surface is scissored into. Fixed to the
+   viewport so scrolling never has to resize it; each card's rect is read per
+   frame. Sits above the page background but below all content. */
+.card-surface {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .service {
   --accent: var(--kinari);
   --tint: transparent;
+  /* Origin of the hover wash, rewritten per enter by ServiceCard from the
+     edge the pointer crossed. The fallback centres it for keyboard focus. */
+  --tint-x: 50%;
+  --tint-y: 50%;
   position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
+  /* The title sits at the foot; the art takes the slack above it. */
+  justify-content: flex-end;
   min-width: 0;
   overflow: hidden;
   padding: clamp(18px, 2vw, 24px);
-  border: 1px solid var(--kinari-30);
+  /* No outline: the raised edge does the separating now. */
+  border: 0;
   border-radius: 14px;
   background: linear-gradient(160deg, var(--tint), transparent 62%),
     var(--sumi-soft);
   transition:
-    border-color 0.3s ease,
-    transform 0.3s var(--ease-out-expo);
+    transform 0.42s var(--ease-out-expo),
+    box-shadow 0.42s var(--ease-out-expo);
+  /* Relief: a hairline of light along the top-left where the light falls, a
+     cast shadow down-right where it does not, and a wide ambient pool beneath
+     to lift the card off the page. The insets come first so the edge reads as
+     a bevel rather than as a second border. */
+  box-shadow:
+    inset 1px 1px 0 rgba(240, 234, 214, 0.07),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+    6px 8px 18px -6px rgba(0, 0, 0, 0.66),
+    18px 24px 48px -18px rgba(0, 0, 0, 0.78);
 }
 
-.service:hover {
-  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  transform: translateY(-2px);
+.service:hover,
+.service:focus-visible,
+.service:focus-within {
+  transform: translateY(-6px);
+  box-shadow:
+    inset 1px 1px 0 rgba(240, 234, 214, 0.12),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.55),
+    10px 14px 26px -8px rgba(0, 0, 0, 0.7),
+    28px 38px 70px -22px rgba(0, 0, 0, 0.82);
 }
+
+.service:focus-visible {
+  outline: 2px solid var(--shu);
+  outline-offset: 3px;
+}
+
+/* With a live surface the card stops painting its own fill and becomes a
+   window onto the canvas behind it. The radius has to be clipped here, since
+   the canvas itself is one flat rectangle. */
+/* No `isolation` here: that would open a new stacking context and cut the card
+   off from the canvas painting behind it. */
+.service[data-surface="live"] {
+  background: transparent;
+}
+
+/* Darkens the surface behind the copy so text keeps its contrast against a
+   moving image. Sits between the canvas and the content. */
+.service[data-surface="live"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  /* Clear at the top where the art sits, dense at the bottom behind the copy.
+     Text contrast has to hold against a moving image. */
+  /* Light at the top where the art sits, dense at the bottom behind the copy.
+     Text contrast has to hold against a moving image. */
+  background: linear-gradient(
+    176deg,
+    rgba(13, 11, 15, 0.18) 0%,
+    rgba(13, 11, 15, 0.34) 40%,
+    rgba(13, 11, 15, 0.8) 70%,
+    rgba(13, 11, 15, 0.93) 100%
+  );
+  pointer-events: none;
+}
+
+/* Engaged overlay. A separate element rather than a second gradient on the
+   veil: `background` does not interpolate between gradients, so deepening the
+   veil in place would snap instead of fade. */
+.service__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    176deg,
+    rgba(13, 11, 15, 0.56) 0%,
+    rgba(13, 11, 15, 0.72) 38%,
+    rgba(13, 11, 15, 0.86) 72%,
+    rgba(13, 11, 15, 0.9) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.42s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.service:hover .service__overlay,
+.service:focus-within .service__overlay {
+  opacity: 1;
+}
+
+/* The wash lives on its own layer so it can fade independently of the card's
+   resting gradient, and so it sits under the content rather than over it. */
+.service::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Above the surface veil, below the copy. */
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    120% 120% at var(--tint-x) var(--tint-y),
+    var(--shu-tint) 0%,
+    color-mix(in srgb, var(--shu-tint) 45%, transparent) 32%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.42s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.service:hover::after,
+.service:focus-within::after {
+  opacity: 1;
+}
+
+.service > * {
+  position: relative;
+  z-index: 1;
+}
+
 
 .service--shu {
   --accent: var(--shu);
   --tint: rgba(227, 66, 52, 0.1);
 }
 
-.service--ai {
-  --accent: var(--ai);
-  --tint: rgba(109, 144, 173, 0.09);
+.service--shu-2 {
+  --accent: var(--shu-2);
+  --tint: rgba(184, 82, 74, 0.085);
 }
 
-.service--matcha {
-  --accent: var(--matcha);
-  --tint: rgba(125, 155, 110, 0.09);
+.service--shu-3 {
+  --accent: var(--shu-3);
+  --tint: rgba(151, 86, 79, 0.075);
 }
 
-.service--kincha {
-  --accent: var(--kincha);
-  --tint: rgba(192, 144, 85, 0.09);
+.service--shu-4 {
+  --accent: var(--shu-4);
+  --tint: rgba(124, 88, 82, 0.07);
 }
 
 .service__art {
@@ -544,29 +794,84 @@ body.menu-open {
   color: var(--accent);
 }
 
+/* Over a live surface the art panel would read as a second box on top of an
+   image. Drop its fill and border so the glyph floats directly on the
+   material, as in the hero. */
+.service[data-surface="live"] .service__art {
+  border-color: transparent;
+  background: transparent;
+}
+
 .glyph {
   width: 100%;
   max-width: 220px;
   height: auto;
 }
 
-.service__body {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
+/* The node the pulse converges on. `is-hit` is added for one flash on
+   arrival; without a pulse running it just sits at rest. */
+.glyph__node {
+  transition:
+    stroke-width 0.18s ease-out,
+    opacity 0.18s ease-out;
 }
 
+.glyph__node.is-hit {
+  stroke-width: 2.4;
+  opacity: 1;
+}
+
+/* Fades out on arrival rather than snapping, so the light lands softly. */
+.glyph__pulse {
+  transition: opacity 0.16s linear;
+}
+
+/* Resting state: the title carries the card on its own, so it is set large and
+   pinned to the foot. It rises out of the way as the detail comes in. */
 .service__title {
   margin: 0;
-  font-size: clamp(15px, 1.6vw, 17px);
+  font-size: clamp(20px, 2.3vw, 26px);
   font-weight: 500;
-  line-height: 1.3;
-  letter-spacing: -0.015em;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
   color: var(--kinari);
+  text-wrap: balance;
+  transition: transform 0.46s var(--ease-out-expo);
+}
+
+.service:hover .service__title,
+.service:focus-within .service__title {
+  transform: translateY(calc(var(--reveal-shift, 0px) * -1));
+}
+
+/* The detail, withheld until the card is engaged. Height is what animates —
+   `display: none` would kill the transition and drop it from the a11y tree. */
+.service__reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.46s var(--ease-out-expo),
+    opacity 0.3s ease-out;
+}
+
+.service:hover .service__reveal,
+.service:focus-within .service__reveal {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 0.46s var(--ease-out-expo),
+    opacity 0.34s ease-out 0.1s;
+}
+
+/* The grid row collapses to zero only if the content itself can be clipped. */
+.service__reveal-inner {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .service__text {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   font-size: 13.5px;
   line-height: 1.65;
   color: var(--kinari-60);
@@ -1407,11 +1712,18 @@ body.menu-open {
   .mosaic__cell--ia {
     grid-row: span 1;
   }
+}
 
-  .hero__content {
-    max-width: 100%;
+/* Below the two-column threshold the facts column is dropped rather than
+   stacked: its whole job is to counterweight the copy horizontally. */
+@media (max-width: 1024px) {
+  .hero__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
+  .hero__facts {
+    display: none;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1438,10 +1750,6 @@ body.menu-open {
 
   body.menu-open .site-header {
     z-index: 25;
-  }
-
-  .hero__content {
-    max-width: 100%;
   }
 
   .hero__scrim {
@@ -1541,5 +1849,19 @@ body.menu-open {
 
   .marquee__track {
     transform: none;
+  }
+
+  /* The blanket `transition: none` above would otherwise freeze the line art
+     at its undrawn offset — an invisible icon. Force it fully drawn; the
+     !important is needed to beat the inline style the draw effect writes. */
+  .glyph path,
+  .glyph rect,
+  .glyph circle {
+    stroke-dashoffset: 0 !important;
+  }
+
+  /* No pulse under reduced motion, so the node must not be left mid-flash. */
+  .glyph__pulse {
+    opacity: 0 !important;
   }
 }

@@ -59,16 +59,97 @@ lib/content.ts      todo el contenido en un solo lugar
 timeline, el `outline` de foco, el hover del mailto, el shader del hero y la
 carta ancla de servicios.
 
-Para que el mosaico de servicios distinga sus cartas sin repetir rojo siete
-veces, hay tres acentos secundarios deliberadamente desaturados —`--ai` añil,
-`--matcha` verde y `--kincha` dorado. Cada carta fija un solo `--accent` y de
-ahí salen su ilustración, sus viñetas y su borde en hover.
+El mosaico de servicios se mantiene dentro de esa familia: un solo matiz en
+cuatro saturaciones (`--shu`, `--shu-2`, `--shu-3`, `--shu-4`), de modo que la
+jerarquía se lee como intensidad y no como color. `--shu` marca la carta ancla
+de IA; el resto baja hacia el gris estructural. Cada carta fija un solo
+`--accent` y de ahí salen su ilustración, sus viñetas y su borde en hover.
+
+## Cartas de servicios
+
+`ServiceCard` es el cliente que da comportamiento a cada carta:
+
+- **Trazo al entrar en viewport.** Mide cada forma con `getTotalLength()` y
+  anima `stroke-dashoffset` a 0 en 900 ms. Una sola vez por carta: el observer
+  se desconecta antes de dibujar. Los rellenos sin trazo se filtran, porque
+  animarles el dash los borraría.
+- **Pulso en la carta ancla.** Un punto de luz recorre las líneas de entrada
+  hacia el nodo cada 4 s y el nodo destella al recibirlo, con
+  `getPointAtLength()` sobre rAF. Las cuatro líneas viven en paths separados
+  justamente para poder recorrerlas de una en una. Solo corre con la carta en
+  pantalla y la pestaña visible.
+- **Tinte por borde de entrada.** En `pointerenter` compara el cursor contra
+  `getBoundingClientRect()` y toma la distancia mínima a cada borde; ese punto
+  se escribe en `--tint-x`/`--tint-y` y el `::after` crece desde ahí hacia
+  `--shu-tint`. Sin glow ni `box-shadow`: es el fondo el que sube de tono.
+
+Bajo `prefers-reduced-motion` el bloque global mata las transiciones, lo que
+dejaría los iconos congelados sin dibujar. Por eso la sección de reduced motion
+fuerza `stroke-dashoffset: 0` — sin esa regla, los siete iconos serían
+invisibles.
+
+## Superficie de las cards
+
+`lib/cardSurface.ts` pinta el fondo vivo de las siete cards con la misma
+familia de shader que el hero: fBm de 3 octavas, domain warp y la misma rampa
+de tres paradas, pero iluminado como una lámina de luz que cruza la card en
+lugar de una pluma radial. Cada card tiene semilla, dirección de flujo e
+intensidad propias; la intensidad sigue la escala de acentos, así que la carta
+ancla es también la más caliente.
+
+**Un solo contexto WebGL para las siete.** Un canvas por card no es viable: los
+navegadores limitan los contextos vivos a ~16 y descartan los viejos en
+silencio (medido: al crear veinte, cuatro ya se habían perdido), así que las
+cards se apagarían al azar. En su lugar hay un canvas `fixed` a viewport
+completo dentro de la sección, y cada card se dibuja en su propio `viewport` +
+`scissor` dentro del mismo frame.
+
+Tres cosas que hay que saber si se toca:
+
+- **`uOrigin` no es opcional.** `gl_FragCoord` es absoluto al framebuffer, no
+  relativo al viewport. Sin restar el origen de la card, solo se pintan las
+  que caen cerca del origen del buffer y el resto sale negro.
+- **El scissor se acota, el viewport no.** Una card que sobresale por abajo da
+  un `y` negativo; el viewport tiene que conservar el rect completo para que
+  las UV sigan cubriendo la card, mientras el scissor se recorta a la pantalla.
+  Un scissor con valores negativos no dibuja nada.
+- **Nada de `isolation: isolate` en `.service`.** Abriría un contexto de
+  apilamiento y cortaría la card del canvas que la pinta por detrás. Por lo
+  mismo, `.card-surface` está excluido de la regla `.section > *`, que si no
+  lo metería en el flujo con `position: relative`.
+
+El velo `::before` sostiene el contraste del texto sobre una imagen en
+movimiento: transparente arriba donde va el line art, casi opaco abajo donde va
+la copia.
+
+## Estado de reposo y hover
+
+En reposo la carta muestra solo la ilustración y el título, grande y anclado al
+pie. La descripción y las viñetas viven en `.service__reveal`, colapsado con
+`grid-template-rows: 0fr` — no `display: none`, que mataría la transición y lo
+sacaría del árbol de accesibilidad. Al entrar el cursor sube un overlay
+(`.service__overlay`, elemento propio porque `background` no interpola entre
+gradientes), el título se desplaza y el detalle se despliega a `1fr`.
+
+Como el contenido queda oculto tras un hover, la carta lleva `tabIndex={0}` y
+todo el estado responde también a `:focus-within`; sin un tab stop, quien
+navegue por teclado nunca vería la descripción.
+
+Las cartas no tienen borde: el relieve sale de un `box-shadow` de cuatro capas
+—dos `inset` que biselan el canto y dos proyectadas que la despegan del fondo.
+
+Solo las esquinas que miran hacia afuera del mosaico llevan radio grande. Qué
+carta ocupa cada esquina cambia con el número de columnas, y la rejilla es
+irregular (dos celdas ocupan dos columnas, una ocupa dos filas), así que
+`useMosaicCorners` las mide en tiempo real y marca `data-corner`; a dos y a una
+columna la carta de IA acaba ocupando las dos esquinas superiores. El shader
+lee esos radios del CSS computado para recortar su máscara igual.
 
 ## Tipografía
 
 | Familia | Uso | Origen |
 | --- | --- | --- |
-| Inter (400/500) | UI y cuerpo | Google Fonts |
+| Poppins (300/400/500/600) | UI y cuerpo | Google Fonts |
 | BubbledotICG-FinePos | display: nombre, cifras, fechas, email | OnlineWebFonts CDN |
 | Geist Pixel Circle | fallback display | local, de [vercel/geist-pixel-font](https://github.com/vercel/geist-pixel-font) (OFL 1.1) |
 
