@@ -61,9 +61,12 @@ export type Service = {
   id: string;
   title: string;
   description: string;
+  /** One-liner under the title in the grid tiles. */
+  tagline: string;
   bullets: string[];
   accent: ServiceAccent;
-  glyph: ServiceGlyph;
+  /** Rendered art in public/assets/services. */
+  image: string;
 };
 
 export const SERVICES: Service[] = [
@@ -72,63 +75,80 @@ export const SERVICES: Service[] = [
     title: "Integración de modelos de IA",
     description:
       "Modelos fundacionales conectados a procesos que ya existen: lectura de documentos, clasificación, extracción estructurada y generación asistida, siempre validada contra tus reglas de negocio.",
+    tagline: "Modelos conectados a procesos que ya existen.",
     bullets: ["Amazon Bedrock", "RAG sobre tus datos", "Validación y trazabilidad"],
     accent: "shu",
-    glyph: "ai",
+    image: "/assets/services/ia.webp",
   },
   {
     id: "automatizacion",
     title: "Automatización de procesos",
     description:
       "Flujos event-driven que quitan el trabajo manual entre sistemas, con reintentos y registro de cada paso.",
+    tagline: "Flujos que eliminan tareas repetitivas.",
     bullets: ["Event-driven", "Integraciones por API", "Reportes automáticos"],
     accent: "shu-2",
-    glyph: "automation",
+    image: "/assets/services/automatizacion.webp",
   },
   {
     id: "aws",
     title: "Cloud en AWS",
     description:
       "Arquitectura serverless que escala con la demanda y no cuesta cuando nadie la usa.",
+    tagline: "Arquitecturas escalables y optimizadas.",
     bullets: ["Lambda y DynamoDB", "Infraestructura con CDK", "Observabilidad"],
     accent: "shu-3",
-    glyph: "cloud",
+    image: "/assets/services/aws.webp",
   },
   {
     id: "erp",
     title: "ERPs a medida",
     description:
       "Inventario, manufactura, ventas y costos en un solo sistema, modelado sobre cómo opera tu negocio.",
+    tagline: "Sistemas que se adaptan a tu operación.",
     bullets: ["Multi-sucursal", "Reportes PDF y Excel", "Permisos por rol"],
     accent: "shu-4",
-    glyph: "erp",
+    image: "/assets/services/erp.webp",
   },
   {
     id: "crm",
     title: "Sistemas CRM",
     description:
       "Pipeline comercial y seguimiento de clientes, con la información donde tu equipo ya trabaja.",
+    tagline: "Clientes, ventas y relaciones en un lugar.",
     bullets: ["Etapas y embudo", "Historial por cliente", "Tableros de cierre"],
     accent: "shu-3",
-    glyph: "crm",
+    image: "/assets/services/crm.webp",
   },
   {
     id: "web",
     title: "Páginas web",
     description:
       "Sitios corporativos rápidos y fáciles de editar. Nada de plantillas genéricas.",
+    tagline: "Sitios rápidos y enfocados en conversión.",
     bullets: ["SEO técnico", "Core Web Vitals", "Formularios y correo"],
     accent: "shu-2",
-    glyph: "web",
+    image: "/assets/services/web.webp",
   },
   {
     id: "plugins",
     title: "Plugins de PHP y WordPress",
     description:
       "Extensiones a medida para WooCommerce y WordPress cuando el plugin que necesitas no existe.",
+    tagline: "Extiende lo que tu plataforma no resuelve.",
     bullets: ["WooCommerce", "APIs de terceros", "Panel administrativo"],
     accent: "shu-4",
-    glyph: "plugin",
+    image: "/assets/services/plugins.webp",
+  },
+  {
+    id: "medida",
+    title: "Soluciones a medida",
+    description:
+      "Cuando el problema no encaja en ninguna categoría: integraciones entre sistemas que no se hablan, herramientas internas, migraciones y todo lo que hoy vive en una hoja de cálculo.",
+    tagline: "Desarrollos únicos para desafíos únicos.",
+    bullets: ["Integraciones", "Herramientas internas", "Migraciones"],
+    accent: "shu-2",
+    image: "/assets/services/medida.webp",
   },
 ];
 

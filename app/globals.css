@@ -105,6 +105,13 @@ body.menu-open {
   padding: clamp(72px, 12vh, 128px) 0;
 }
 
+/* The hero already ends in a lot of air below its own content, and the
+   metrics bar adds its own padding on top of that. The first section after
+   them starts close instead of opening another full gap. */
+.metrics + .section {
+  padding-top: clamp(24px, 3.5vh, 48px);
+}
+
 .section__title {
   margin: 0 0 clamp(28px, 4vh, 44px);
   font-family: var(--font-display);
@@ -564,649 +571,616 @@ body.menu-open {
 }
 
 /* ---------------------------------------------------------------------------
-   Services mosaic
+   Services
 --------------------------------------------------------------------------- */
 
 .section__eyebrow {
   margin: 0 0 12px;
+  color: var(--shu);
 }
 
-.mosaic {
+.section__lead {
+  max-width: 52ch;
+  margin: -18px 0 clamp(28px, 4vh, 44px);
+  font-size: clamp(14px, 1.4vw, 16px);
+  line-height: 1.7;
+  color: var(--kinari-60);
+}
+
+.services {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 3vw, 34px);
+}
+
+/* Featured band ----------------------------------------------------------- */
+
+/* No card chrome: the art and the copy sit directly on the page. */
+.banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 48px);
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.banner__art {
   position: relative;
+  margin: 0;
+}
+
+.banner__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.banner__body {
+  min-width: 0;
+}
+
+.banner__flag {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 5px 11px;
+  border-radius: 5px;
+  background: rgba(227, 66, 52, 0.14);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--shu);
+}
+
+.banner__title {
+  margin: 0 0 14px;
+  font-size: clamp(24px, 2.8vw, 34px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--kinari);
+}
+
+.banner__title span {
+  display: block;
+  color: var(--shu);
+}
+
+.banner__text {
+  max-width: 46ch;
+  margin: 0 0 clamp(16px, 2.2vh, 22px);
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--kinari-60);
+}
+
+.banner__points {
+  display: grid;
+  gap: 11px;
+  margin: 0 0 clamp(18px, 2.6vh, 26px);
+  padding: clamp(16px, 2.2vh, 22px) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  list-style: none;
+}
+
+.banner__points li {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 13px;
+  color: var(--kinari);
+}
+
+.banner__point-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: rgba(227, 66, 52, 0.13);
+  color: var(--shu);
+}
+
+.banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+.banner__actions .btn {
+  gap: 9px;
+  padding: 13px clamp(18px, 2.2vw, 26px);
+  font-size: 13.5px;
+}
+
+/* Grid of tiles ----------------------------------------------------------- */
+
+/* With the frames gone the grid needs its own breathing room, or the tiles
+   sit flush against the band above and the CTA below. */
+.services__head {
+  margin-top: clamp(14px, 2.4vh, 26px);
+  margin-bottom: clamp(10px, 1.6vh, 18px);
+}
+
+.services__grid {
+  padding-bottom: clamp(6px, 1.4vh, 14px);
+}
+
+.services__eyebrow {
+  margin: 0 0 8px;
+}
+
+.services__title {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 27px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  color: var(--kinari);
+}
+
+.services__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(12px, 1.6vw, 18px);
+  /* Roomier than the old framed layout: with no borders, the gap is the only
+     thing separating one tile's copy from the next one's art. */
+  column-gap: clamp(18px, 2.2vw, 30px);
+  row-gap: clamp(26px, 3.4vh, 40px);
 }
 
-/* ---------------------------------------------------------------------------
-   Expanded card
-
-   Clicking a card lifts it out of the grid to cover the mosaic's own area —
-   not the viewport. It is absolutely positioned against .mosaic, so the
-   surrounding page never moves; ServicesMosaic pins the grid height for the
-   duration so the section cannot collapse behind it.
---------------------------------------------------------------------------- */
-
-.mosaic__cell {
-  transition:
-    opacity 0.4s var(--ease-out-expo),
-    filter 0.4s var(--ease-out-expo),
-    transform 0.5s var(--ease-out-expo);
-}
-
-/* The cards that are not open recede rather than vanish: the reader keeps a
-   sense of what they came from. */
-.mosaic[data-has-open] .mosaic__cell {
-  opacity: 0;
-  filter: blur(6px);
-  transform: scale(0.97);
-  pointer-events: none;
-}
-
-/* The open cell keeps its grid slot as a placeholder; the card inside is what
-   escapes. Raised above its siblings so it is never clipped by them. */
-.mosaic__cell:has(.service[data-open]) {
-  opacity: 1;
-  filter: none;
-  transform: none;
-  pointer-events: auto;
-  z-index: 3;
-}
-
-.service[data-open] {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  /* Copy on the right, art on the left, as in the reference. */
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  align-items: center;
-  gap: clamp(24px, 4vw, 56px);
-  padding: clamp(28px, 3.4vw, 52px);
-  border-radius: var(--mosaic-radius);
-  cursor: default;
-  animation: cardOpen 0.52s var(--ease-out-expo) both;
-}
-
-@keyframes cardOpen {
-  from {
-    opacity: 0.4;
-    transform: scale(0.965);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.service[data-open] .service__art {
-  grid-column: 1;
-  grid-row: 1;
-  min-height: 0;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.service[data-open] .glyph {
-  max-width: min(100%, 460px);
-}
-
-/* Title and detail stack into the right-hand column. */
-.service[data-open] .service__title {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: end;
-  margin: 0 0 14px;
-  transform: none;
-  animation: openCopy 0.5s var(--ease-out-expo) 0.08s both;
-}
-
-.service[data-open] .service__reveal {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: start;
-  grid-template-rows: 1fr;
-  opacity: 1;
-  animation: openCopy 0.5s var(--ease-out-expo) 0.16s both;
-}
-
-@keyframes openCopy {
-  from {
-    opacity: 0;
-    transform: translateX(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Two rows so the title can sit above the copy inside the right column. */
-.service[data-open] {
-  grid-template-rows: auto auto;
-}
-
-.service[data-open] .service__art {
-  grid-row: 1 / span 2;
-}
-
-/* Expanded, the veil runs left-to-right instead of top-to-bottom: the copy is
-   in the right column now, and the art needs the light on the left. */
-.service[data-open].service[data-surface="live"]::before {
-  background: linear-gradient(
-    100deg,
-    rgba(13, 11, 15, 0.18) 0%,
-    rgba(13, 11, 15, 0.44) 40%,
-    rgba(13, 11, 15, 0.86) 62%,
-    rgba(13, 11, 15, 0.93) 100%
-  );
-}
-
-.service[data-open] .service__text {
-  max-width: 46ch;
-  font-size: 15px;
-  line-height: 1.7;
-}
-
-.service[data-open] .service__bullets {
-  padding-top: 20px;
-}
-
-.service[data-open] .service__bullets li {
-  font-size: 12.5px;
-}
-
-.service__close {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 26px;
-  padding: 10px 22px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--kinari-60);
-  font-family: var(--font-sans);
-  font-size: 12.5px;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  transition:
-    color 0.24s ease,
-    border-color 0.24s ease,
-    background 0.24s ease;
-}
-
-.service__close:hover {
-  color: var(--kinari);
-  border-color: var(--shu);
-  background: rgba(227, 66, 52, 0.12);
-}
-
-/* Hover cue: the hand and label that say the card opens. */
-.service__cue {
-  position: absolute;
-  top: clamp(16px, 1.8vw, 22px);
-  right: clamp(16px, 1.8vw, 22px);
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 13px 7px 11px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  background: rgba(8, 7, 10, 0.72);
-  font-size: 11.5px;
-  letter-spacing: 0.03em;
-  color: var(--kinari);
-  opacity: 0;
-  transform: translateY(-6px);
-  pointer-events: none;
-  transition:
-    opacity 0.3s var(--ease-out-expo),
-    transform 0.3s var(--ease-out-expo);
-}
-
-.service:hover .service__cue,
-.service:focus-visible .service__cue {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.service[data-open] .service__cue {
-  opacity: 0;
-}
-
-.mosaic__cell {
+.services__cell {
   display: flex;
   min-width: 0;
 }
 
-.mosaic__cell--ia {
-  grid-column: span 2;
-  grid-row: span 2;
+/* Tiles recede while a detail panel is open, without leaving their space
+   behind — the panel below is what the reader is looking at. */
+.services__grid[data-has-open] .services__cell {
+  opacity: 0.28;
+  transition: opacity 0.4s var(--ease-out-expo);
 }
 
-.mosaic__cell--automatizacion,
-.mosaic__cell--plugins {
-  grid-column: span 2;
+.services__grid[data-has-open] .services__cell:has(.tile[data-open]) {
+  opacity: 1;
 }
 
-/* Only the cells sitting at the corners of the mosaic carry a large radius,
-   and only on the corner that faces out. The interior corners stay tight, so
-   the seven cards read as one slab with rounded ends rather than seven pills.
-
-   Which card lands in which corner changes with the column count, and the
-   grid is irregular (two cells span two columns, one spans two rows), so the
-   corners are measured at runtime by useMosaicCorners and flagged with
-   data-corner rather than guessed per id here. */
-.service[data-corner~="tl"] {
-  border-top-left-radius: var(--mosaic-radius);
-}
-
-.service[data-corner~="tr"] {
-  border-top-right-radius: var(--mosaic-radius);
-}
-
-.service[data-corner~="br"] {
-  border-bottom-right-radius: var(--mosaic-radius);
-}
-
-.service[data-corner~="bl"] {
-  border-bottom-left-radius: var(--mosaic-radius);
-}
-
-/* The one canvas every card's surface is scissored into. Fixed to the
-   viewport so scrolling never has to resize it; each card's rect is read per
-   frame. Sits above the page background but below all content. */
-.card-surface {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.service {
-  --accent: var(--kinari);
-  --tint: transparent;
-  /* Origin of the hover wash, rewritten per enter by ServiceCard from the
-     edge the pointer crossed. The fallback centres it for keyboard focus. */
-  --tint-x: 50%;
-  --tint-y: 50%;
+/* Tiles carry no frame either: the art is the card. */
+.tile {
   position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
-  /* The title sits at the foot; the art takes the slack above it. */
-  justify-content: flex-end;
   min-width: 0;
-  overflow: hidden;
-  padding: clamp(18px, 2vw, 24px);
-  /* No outline: the raised edge does the separating now. */
+  padding: 0;
   border: 0;
-  border-radius: 14px;
-  background: linear-gradient(160deg, var(--tint), transparent 62%),
-    var(--sumi-soft);
-  transition:
-    transform 0.42s var(--ease-out-expo),
-    box-shadow 0.42s var(--ease-out-expo);
-  /* Relief: a hairline of light along the top-left where the light falls, a
-     cast shadow down-right where it does not, and a wide ambient pool beneath
-     to lift the card off the page. The insets come first so the edge reads as
-     a bevel rather than as a second border. */
-  box-shadow:
-    inset 1px 1px 0 rgba(240, 234, 214, 0.07),
-    inset -1px -1px 0 rgba(0, 0, 0, 0.5),
-    6px 8px 18px -6px rgba(0, 0, 0, 0.66),
-    18px 24px 48px -18px rgba(0, 0, 0, 0.78);
-}
-
-.service {
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
+  transition: transform 0.32s var(--ease-out-expo);
 }
 
-/* Lift only where there is a real pointer. On touch, :hover sticks after a tap
-   and the card stays raised — which is the jump seen on mobile. */
-@media (hover: hover) and (pointer: fine) {
-  .service:hover,
-  .service:focus-visible,
-  .service:focus-within {
-    transform: translateY(-6px);
-    box-shadow:
-      inset 1px 1px 0 rgba(240, 234, 214, 0.12),
-      inset -1px -1px 0 rgba(0, 0, 0, 0.55),
-      10px 14px 26px -8px rgba(0, 0, 0, 0.7),
-      28px 38px 70px -22px rgba(0, 0, 0, 0.82);
-  }
-}
-
-.service:focus-visible {
-  outline: 2px solid var(--shu);
-  outline-offset: 3px;
-}
-
-/* With a live surface the card stops painting its own fill and becomes a
-   window onto the canvas behind it. The radius has to be clipped here, since
-   the canvas itself is one flat rectangle. */
-/* No `isolation` here: that would open a new stacking context and cut the card
-   off from the canvas painting behind it. */
-.service[data-surface="live"] {
-  background: transparent;
-}
-
-/* Darkens the surface behind the copy so text keeps its contrast against a
-   moving image. Sits between the canvas and the content. */
-.service[data-surface="live"]::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  /* Clear at the top where the art sits, dense at the bottom behind the copy.
-     Text contrast has to hold against a moving image. */
-  /* Light at the top where the art sits, dense at the bottom behind the copy.
-     Text contrast has to hold against a moving image. */
-  background: linear-gradient(
-    176deg,
-    rgba(13, 11, 15, 0.18) 0%,
-    rgba(13, 11, 15, 0.34) 40%,
-    rgba(13, 11, 15, 0.8) 70%,
-    rgba(13, 11, 15, 0.93) 100%
-  );
-  pointer-events: none;
-}
-
-/* Engaged overlay. A separate element rather than a second gradient on the
-   veil: `background` does not interpolate between gradients, so deepening the
-   veil in place would snap instead of fade. */
-.service__overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    176deg,
-    rgba(13, 11, 15, 0.56) 0%,
-    rgba(13, 11, 15, 0.72) 38%,
-    rgba(13, 11, 15, 0.86) 72%,
-    rgba(13, 11, 15, 0.9) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.42s var(--ease-out-expo);
-  pointer-events: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .service:hover .service__overlay,
-  .service:focus-within .service__overlay {
-    opacity: 1;
-  }
-}
-
-/* The wash lives on its own layer so it can fade independently of the card's
-   resting gradient, and so it sits under the content rather than over it. */
-.service::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* Above the surface veil, below the copy. */
-  z-index: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    120% 120% at var(--tint-x) var(--tint-y),
-    var(--shu-tint) 0%,
-    color-mix(in srgb, var(--shu-tint) 45%, transparent) 32%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.42s var(--ease-out-expo);
-  pointer-events: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .service:hover::after,
-  .service:focus-within::after {
-    opacity: 1;
-  }
-}
-
-.service > * {
-  position: relative;
-  z-index: 1;
-}
-
-
-.service--shu {
-  --accent: var(--shu);
-  --tint: rgba(227, 66, 52, 0.1);
-}
-
-.service--shu-2 {
-  --accent: var(--shu-2);
-  --tint: rgba(184, 82, 74, 0.085);
-}
-
-.service--shu-3 {
-  --accent: var(--shu-3);
-  --tint: rgba(151, 86, 79, 0.075);
-}
-
-.service--shu-4 {
-  --accent: var(--shu-4);
-  --tint: rgba(124, 88, 82, 0.07);
-}
-
-.service__art {
-  display: flex;
-  /* Takes the slack in tall cells, so the copy never floats away from it. */
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  min-height: 96px;
-  margin-bottom: clamp(16px, 2vh, 22px);
-  padding: clamp(14px, 2vh, 20px) 12px;
-  border: 1px solid var(--kinari-30);
-  border-radius: 10px;
-  background: #00000038;
-  color: var(--accent);
-}
-
-/* Over a live surface the art panel would read as a second box on top of an
-   image. Drop its fill and border so the glyph floats directly on the
-   material, as in the hero. */
-.service[data-surface="live"] .service__art {
-  border-color: transparent;
-  background: transparent;
-}
-
-.glyph {
-  width: 100%;
-  max-width: 220px;
-  height: auto;
-}
-
-/* The node the pulse converges on. `is-hit` is added for one flash on
-   arrival; without a pulse running it just sits at rest. */
-.glyph__node {
-  transition:
-    stroke-width 0.18s ease-out,
-    opacity 0.18s ease-out;
-}
-
-.glyph__node.is-hit {
-  stroke-width: 2.4;
-  opacity: 1;
-}
-
-/* Fades out on arrival rather than snapping, so the light lands softly. */
-.glyph__pulse {
-  transition: opacity 0.16s linear;
-}
-
-/* Resting state: the title carries the card on its own, so it is set large and
-   pinned to the foot. It rises out of the way as the detail comes in. */
-.service__title {
-  margin: 0;
-  font-size: clamp(20px, 2.3vw, 26px);
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  color: var(--kinari);
-  text-wrap: balance;
-  transition: transform 0.46s var(--ease-out-expo);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .service:hover .service__title,
-  .service:focus-within .service__title {
-    transform: translateY(calc(var(--reveal-shift, 0px) * -1));
-  }
-}
-
-/* The detail, withheld until the card is engaged. Height is what animates —
-   `display: none` would kill the transition and drop it from the a11y tree. */
-.service__reveal {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition:
-    grid-template-rows 0.46s var(--ease-out-expo),
-    opacity 0.3s ease-out;
-}
-
-/* On touch the detail arrives by tapping the card open, not by hover — a
-   sticky :hover would leave it half-expanded after a scroll. */
-@media (hover: hover) and (pointer: fine) {
-  .service:hover .service__reveal,
-  .service:focus-within .service__reveal {
-    grid-template-rows: 1fr;
-    opacity: 1;
-    transition:
-      grid-template-rows 0.46s var(--ease-out-expo),
-      opacity 0.34s ease-out 0.1s;
-  }
-}
-
-/* The grid row collapses to zero only if the content itself can be clipped. */
-.service__reveal-inner {
-  min-height: 0;
+.tile__art {
+  margin: 0 0 clamp(16px, 2.2vh, 22px);
+  border-radius: 12px;
   overflow: hidden;
 }
 
-.service__text {
-  margin: 12px 0 0;
-  font-size: 13.5px;
+.tile__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-out-expo);
+}
+
+.tile__title {
+  margin: 0 0 9px;
+  font-size: clamp(16px, 1.6vw, 18.5px);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.018em;
+  color: var(--kinari);
+}
+
+.tile__text {
+  margin: 0;
+  font-size: clamp(13px, 1.25vw, 14.5px);
   line-height: 1.65;
   color: var(--kinari-60);
 }
 
-.service__bullets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 14px;
-  margin: 0;
-  padding: clamp(14px, 1.8vh, 18px) 0 0;
-  list-style: none;
+/* Bottom-left, on the text column rather than floating in the corner — the
+   tile has no frame for a corner marker to sit against. */
+.tile__arrow {
+  display: inline-flex;
+  margin-top: 14px;
+  color: rgba(240, 234, 214, 0.35);
+  transition:
+    transform 0.3s var(--ease-out-expo),
+    color 0.3s ease;
 }
 
-.service__bullets li {
-  position: relative;
-  padding-left: 13px;
-  font-size: 11.5px;
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover .tile__arrow {
+    color: var(--shu);
+    transform: translateX(4px);
+  }
+}
+
+/* Hover: a flat veil with one prompt in the middle, nothing else. Bounded to
+   the art now that the tile has no frame of its own — covering the title too
+   would leave the prompt floating over bare page. */
+.tile__veil {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  background: rgba(8, 6, 9, 0.82);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.tile__cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 20px;
+  border: 1px solid rgba(227, 66, 52, 0.55);
+  border-radius: 999px;
+  background: rgba(227, 66, 52, 0.14);
+  font-size: 12.5px;
+  font-weight: 500;
   letter-spacing: 0.02em;
+  color: var(--kinari);
+  transform: translateY(8px) scale(0.96);
+  transition: transform 0.34s var(--ease-out-expo);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover {
+    transform: translateY(-4px);
+  }
+
+  .tile:hover .tile__art img {
+    transform: scale(1.05);
+  }
+
+  .tile:hover .tile__veil,
+  .tile:focus-visible .tile__veil {
+    opacity: 1;
+  }
+
+  .tile:hover .tile__cue,
+  .tile:focus-visible .tile__cue {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Open: the art carries the highlight, since the tile has no border. */
+.tile[data-open] .tile__art {
+  box-shadow:
+    0 0 0 1px rgba(227, 66, 52, 0.6),
+    0 14px 34px -18px rgba(227, 66, 52, 0.5);
+}
+
+.tile[data-open] .tile__arrow {
+  color: var(--shu);
+  transform: rotate(90deg);
+}
+
+/* Detail panel ------------------------------------------------------------ */
+
+.detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.42s var(--ease-out-expo),
+    opacity 0.3s ease;
+}
+
+.detail[data-open] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.detail__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+  align-items: center;
+  gap: clamp(18px, 2.6vw, 38px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.detail[data-open] .detail__inner {
+  padding: clamp(20px, 2.4vw, 32px);
+  border: 1px solid rgba(227, 66, 52, 0.22);
+  border-radius: clamp(16px, 1.8vw, 22px);
+  /* Flat black washed with red, per the brief — not the live shader. */
+  background:
+    radial-gradient(110% 130% at 4% 50%, rgba(227, 66, 52, 0.16), transparent 62%),
+    #0a080c;
+}
+
+.detail__art {
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.detail__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.detail__body {
+  min-width: 0;
+}
+
+.detail__eyebrow {
+  margin: 0 0 9px;
+  color: var(--shu);
+}
+
+.detail__title {
+  margin: 0 0 12px;
+  font-size: clamp(19px, 2.2vw, 26px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.028em;
+  color: var(--kinari);
+}
+
+.detail__text {
+  max-width: 52ch;
+  margin: 0 0 clamp(14px, 2vh, 20px);
+  font-size: 13.5px;
+  line-height: 1.72;
   color: var(--kinari-60);
 }
 
-.service__bullets li::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--accent);
-  transform: translateY(-50%);
+.detail__bullets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 18px;
+  margin: 0 0 clamp(18px, 2.4vh, 24px);
+  padding: 0;
+  list-style: none;
 }
 
-/* The anchor card gets more room, so it can breathe at a larger scale. */
-.service[data-featured] {
-  padding: clamp(22px, 2.4vw, 30px);
+.detail__bullets li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--kinari);
 }
 
-.service[data-featured] .service__art {
-  flex: 1;
-  padding: clamp(20px, 4vh, 40px) 16px;
+.detail__check {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgba(227, 66, 52, 0.14);
+  color: var(--shu);
 }
 
-.service[data-featured] .glyph {
-  max-width: 320px;
+.detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
 }
 
-.service[data-featured] .service__title {
-  font-size: clamp(19px, 2.2vw, 24px);
-  letter-spacing: -0.025em;
+.detail__actions .btn {
+  padding: 12px 22px;
+  font-size: 13px;
 }
 
-.service[data-featured] .service__text {
-  max-width: 46ch;
-  font-size: 14.5px;
+.detail__close {
+  padding: 12px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: none;
+  color: var(--kinari-60);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    color 0.24s ease,
+    border-color 0.24s ease;
+}
+
+.detail__close:hover {
+  color: var(--kinari);
+  border-color: rgba(227, 66, 52, 0.5);
+}
+
+/* Closing CTA ------------------------------------------------------------- */
+
+.services__cta {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 20px);
+  padding: clamp(16px, 2vw, 22px) clamp(18px, 2.4vw, 28px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.016);
+}
+
+.services__cta-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(227, 66, 52, 0.12);
+  color: var(--shu);
+}
+
+.services__cta-title {
+  margin: 0 0 3px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--kinari);
+}
+
+.services__cta-text {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--kinari-60);
+}
+
+.services__cta-btn {
+  gap: 8px;
+  margin-left: auto;
+  padding: 12px 20px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+@media (max-width: 1040px) {
+  .services__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .banner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detail__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detail__art {
+    max-width: 260px;
+  }
+
+  .services__cta {
+    flex-wrap: wrap;
+  }
+
+  .services__cta-btn {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 620px) {
+  .services__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* One column below this: two tiles side by side leave the copy too narrow to
+   read once the type is at full size. */
+@media (max-width: 460px) {
+  .services__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* ---------------------------------------------------------------------------
    About
 --------------------------------------------------------------------------- */
 
-.about__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: clamp(32px, 6vw, 72px);
-  align-items: start;
-}
-
-/* Left column reads as a panel rather than loose text on the page. */
-.about__lead {
+.about {
   position: relative;
-  padding: clamp(24px, 2.6vw, 34px) clamp(24px, 2.6vw, 34px) clamp(24px, 2.6vw, 34px)
-    clamp(28px, 3vw, 40px);
-  border-radius: 18px;
-  background: linear-gradient(
-    165deg,
-    rgba(227, 66, 52, 0.07),
-    rgba(255, 255, 255, 0.018) 46%,
-    transparent
-  );
-  box-shadow:
-    inset 1px 1px 0 rgba(240, 234, 214, 0.05),
-    18px 22px 44px -24px rgba(0, 0, 0, 0.8);
 }
 
-/* Accent rule down the left edge, echoing the timeline and the chips. */
-.about__lead::before {
-  content: "";
-  position: absolute;
-  top: clamp(24px, 2.6vw, 34px);
-  bottom: clamp(24px, 2.6vw, 34px);
-  left: 0;
-  width: 2px;
-  border-radius: 1px;
-  background: linear-gradient(
-    180deg,
-    var(--shu),
-    rgba(227, 66, 52, 0.15) 70%,
-    transparent
-  );
+.about__panels {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2vw, 22px);
+}
+
+/* No card chrome: the content sits directly on the page and runs the full
+   width of the shell. A soft red wash keeps the section from reading as a
+   bare column of text. */
+.about__card,
+.stack {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.about__card {
+  padding-bottom: clamp(28px, 4vh, 44px);
+}
+
+.stack {
+  padding-top: clamp(28px, 4vh, 44px);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.about__card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  overflow: hidden;
+}
+
+/* The watermark belongs to the card here, not to the section. */
+.about__kanji {
+  top: clamp(10px, 2vw, 26px);
+  right: clamp(16px, 3vw, 48px);
+  font-size: clamp(84px, 11vw, 150px);
+  opacity: 0.05;
+}
+
+.about__intro {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.about__eyebrow {
+  margin: 0 0 10px;
+  color: var(--shu);
+}
+
+.about__title {
+  margin: 0 0 14px;
+  font-size: clamp(38px, 4.6vw, 62px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--kinari);
+}
+
+.about__title span {
+  color: var(--shu);
 }
 
 .about__quote {
-  margin: 0 0 16px;
-  font-family: var(--font-display);
-  font-size: clamp(19px, 2.1vw, 25px);
-  line-height: 1.3;
-  letter-spacing: -0.03em;
+  margin: 0 0 18px;
+  font-size: clamp(16px, 1.7vw, 19px);
+  font-weight: 500;
+  line-height: 1.45;
   color: var(--kinari);
-  text-wrap: balance;
 }
 
 .about__quote em {
@@ -1215,112 +1189,251 @@ body.menu-open {
 }
 
 .about__text {
+  max-width: 46ch;
   margin: 0;
-  font-size: clamp(15px, 1.5vw, 17px);
+  font-size: clamp(14px, 1.4vw, 15.5px);
   line-height: 1.75;
   color: var(--kinari-60);
 }
 
-/* Credentials as a small data table, not more prose. */
-.about__facts {
-  display: grid;
-  gap: 0;
-  margin: clamp(22px, 3vh, 30px) 0 0;
-}
-
-.about__fact {
+.about__sign {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 11px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  align-items: center;
+  gap: 18px;
+  margin-top: clamp(20px, 3vh, 30px);
 }
 
-.about__fact dt {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.about__fact dd {
-  margin: 0;
-  font-size: 13.5px;
-  text-align: right;
+.about__signature {
+  width: 104px;
+  height: auto;
   color: var(--kinari);
-}
-
-.about__mail {
-  display: inline-block;
-  margin-top: clamp(18px, 2.4vh, 24px);
-  font-family: var(--font-display);
-  font-size: 14px;
-  letter-spacing: -0.01em;
-  color: var(--kinari-60);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(227, 66, 52, 0.4);
-  padding-bottom: 2px;
-  transition:
-    color 0.25s ease,
-    border-color 0.25s ease;
-}
-
-.about__mail:hover {
-  color: var(--shu);
-  border-color: var(--shu);
-}
-
-.stack-group + .stack-group {
-  margin-top: clamp(18px, 2.6vh, 24px);
-}
-
-.stack-group__title {
-  display: flex;
-  align-items: baseline;
-  gap: 9px;
-  margin: 0 0 11px;
-}
-
-/* Numbering gives the five groups an order to be read in. */
-.stack-group__index {
-  font-family: var(--font-display);
-  font-size: 10px;
-  letter-spacing: 0;
-  color: var(--shu);
   opacity: 0.75;
 }
 
-.stack-group__tags {
+.about__degree {
+  padding: 9px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--kinari-60);
+  white-space: nowrap;
+}
+
+.about__art {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.about__art img {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  /* Floats rather than sitting still: the section is otherwise inert. */
+  animation: aboutFloat 7s ease-in-out infinite;
+}
+
+@keyframes aboutFloat {
+  0%,
+  100% {
+    transform: translateY(-6px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+/* Meta strip runs the full width under both columns. */
+.about__meta {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: clamp(8px, 1.4vh, 16px) 0 0;
+  padding: clamp(16px, 2vw, 22px) clamp(12px, 2vw, 24px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.about__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 clamp(10px, 1.6vw, 20px);
+}
+
+.about__meta-item + .about__meta-item {
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.about__meta-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(227, 66, 52, 0.1);
+  color: var(--shu);
+}
+
+.about__meta dt {
+  margin: 0 0 3px;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(240, 234, 214, 0.4);
+}
+
+.about__meta dd {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--kinari);
+}
+
+.about__meta dd a {
+  color: var(--shu);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.about__meta dd a:hover {
+  color: #f47163;
+}
+
+/* Stack ------------------------------------------------------------------- */
+
+.stack__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: clamp(20px, 2.6vh, 30px);
+}
+
+.stack__eyebrow {
+  margin: 0 0 8px;
+  color: var(--shu);
+}
+
+.stack__title {
+  margin: 0;
+  font-size: clamp(24px, 2.9vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--kinari);
+}
+
+.stack__note {
+  max-width: 26ch;
+  margin: 0;
+  padding-left: 14px;
+  border-left: 2px solid var(--shu);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--kinari-60);
+}
+
+.stack__grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 15px);
+}
+
+.stack-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(14px, 1.5vw, 20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.018);
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease,
+    transform 0.3s var(--ease-out-expo);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stack-card:hover {
+    border-color: rgba(227, 66, 52, 0.32);
+    background: rgba(227, 66, 52, 0.05);
+    transform: translateY(-3px);
+  }
+}
+
+.stack-card__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  /* Wide screens keep every group open, so the header is not interactive. */
+  cursor: default;
+}
+
+.stack-card__icon {
+  display: block;
+  flex: 0 0 auto;
+  margin-bottom: 12px;
+  color: var(--shu);
+}
+
+.stack-card__index {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  color: var(--shu);
+  opacity: 0.8;
+}
+
+.stack-card__name {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--kinari);
+}
+
+/* Only meaningful in the collapsed layout. */
+.stack-card__chevron {
+  display: none;
+  flex: 0 0 auto;
+  color: var(--kinari-60);
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+/* Wide: the icon sits on its own line above the label. */
+@media (min-width: 901px) {
+  .stack-card__head {
+    flex-wrap: wrap;
+  }
+
+  .stack-card__icon {
+    width: 100%;
+  }
+}
+
+.stack-card__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
+  gap: 7px;
+  margin: 14px 0 0;
   padding: 0;
   list-style: none;
 }
 
-/* Chips settle in per group once the column is revealed. --i comes from the
-   group index, so the five rows cascade instead of landing at once. */
-.reveal.is-visible .stack-group__tags .tag {
-  animation: chipIn 0.5s var(--ease-out-expo) both;
-  animation-delay: calc(var(--i, 0) * 90ms + var(--j, 0) * 32ms);
-}
-
-@keyframes chipIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Chips, not outlined pills. A filled slab with a soft edge sits better on the
    dark ground than a hollow ring, and the accent bar on the left gives the row
-   a rhythm the old outline never had. */
+   a rhythm the old outline never had. Shared with the project carousel. */
 .tag {
   position: relative;
   display: inline-flex;
@@ -1361,20 +1474,119 @@ body.menu-open {
     height 0.24s var(--ease-out-expo);
 }
 
-.tag:hover {
-  color: var(--kinari);
-  border-color: rgba(227, 66, 52, 0.4);
-  background: linear-gradient(
-    180deg,
-    rgba(227, 66, 52, 0.14),
-    rgba(227, 66, 52, 0.05)
-  );
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .tag:hover {
+    color: var(--kinari);
+    border-color: rgba(227, 66, 52, 0.4);
+    background: linear-gradient(
+      180deg,
+      rgba(227, 66, 52, 0.14),
+      rgba(227, 66, 52, 0.05)
+    );
+    transform: translateY(-2px);
+  }
+
+  .tag:hover::before {
+    opacity: 1;
+    height: 15px;
+  }
 }
 
-.tag:hover::before {
-  opacity: 1;
-  height: 15px;
+.reveal.is-visible .stack-card__tags .tag {
+  animation: chipIn 0.5s var(--ease-out-expo) both;
+  animation-delay: calc(var(--i, 0) * 90ms + var(--j, 0) * 32ms);
+}
+
+@keyframes chipIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Collapsed: the header becomes a real control and the panel animates. */
+@media (max-width: 900px) {
+  .stack__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stack-card__head {
+    cursor: pointer;
+  }
+
+  .stack-card__icon {
+    margin-bottom: 0;
+  }
+
+  .stack-card__chevron {
+    display: block;
+  }
+
+  .stack-card:not([data-open]) .stack-card__chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Height animates via the grid trick, so the panel is never display:none
+     and its contents stay in the accessibility tree. */
+  .stack-card__body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.38s var(--ease-out-expo);
+  }
+
+  .stack-card[data-open] .stack-card__body {
+    grid-template-rows: 1fr;
+  }
+
+  .stack-card__tags {
+    min-height: 0;
+    overflow: hidden;
+    /* The gap moves onto the open state, so a collapsed panel is truly zero
+       instead of leaving its top margin behind. */
+    margin-top: 0;
+  }
+
+  .stack-card[data-open] .stack-card__tags {
+    margin-top: 14px;
+  }
+}
+
+@media (max-width: 860px) {
+  .about__card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .about__art {
+    order: -1;
+  }
+
+  .about__art img {
+    max-width: 320px;
+  }
+
+  .about__meta {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .about__meta-item {
+    padding: 10px clamp(6px, 2vw, 12px);
+  }
+
+  .about__meta-item + .about__meta-item {
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .stack__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -2101,11 +2313,6 @@ body.menu-open {
 --------------------------------------------------------------------------- */
 
 @media (max-width: 900px) {
-  .about__grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(28px, 5vh, 40px);
-  }
-
   .mosaic {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2119,11 +2326,6 @@ body.menu-open {
    side by side at this width leaves both the art and the copy squeezed. */
 @media (max-width: 720px) {
   .service[data-open] {
-    /* Single column, the mosaic is one card wide and very tall here, so the
-       expanded card is pinned to the top rather than stretched over all of
-       it — inset: 0 would make an 1800px-tall panel. */
-    inset: 0 0 auto;
-    max-height: none;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto auto;
     align-content: start;
